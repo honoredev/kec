@@ -1,0 +1,36 @@
+/* Header Responsive Fixes */
+
+/* Ensure mobile menu button is visible on small screens */
+@media (max-width: 1023px) {
+  .mobile-menu-button {
+    display: block !important;
+  }
+  
+  .desktop-nav {
+    display: none !important;
+  }
+}
+
+/* Ensure desktop nav is visible on large screens */
+@media (min-width: 1024px) {
+  .mobile-menu-button {
+    display: none !important;
+  }
+  
+  .desktop-nav {
+    display: flex !important;
+  }
+  
+  .mobile-menu {
+    display: none !important;
+  }
+}
+
+/* Mobile menu specific styles */
+@media (max-width: 1023px) {
+  .mobile-menu {
+    width: 100%;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+}

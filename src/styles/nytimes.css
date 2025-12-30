@@ -1,0 +1,96 @@
+/* NYTimes-style typography and layout */
+
+/* Import serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap');
+
+/* Override Tailwind font-serif */
+.font-serif {
+  font-family: 'Noto Serif', Georgia, serif;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Hover effects */
+.group:hover .group-hover\:underline {
+  text-decoration: underline;
+}
+
+/* Article prose styling */
+.prose {
+  color: #374151;
+  line-height: 1.75;
+}
+
+.prose p {
+  margin-bottom: 1.25em;
+}
+
+.prose h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+.prose h3 {
+  font-size: 1.25em;
+  font-weight: 700;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+}
+
+.prose blockquote {
+  font-style: italic;
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1em;
+  margin: 1.6em 0;
+  color: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid.grid-cols-12 {
+    grid-template-columns: 1fr;
+  }
+  
+  .col-span-8,
+  .col-span-4,
+  .col-span-6 {
+    grid-column: span 1;
+  }
+  
+  .grid.grid-cols-3,
+  .grid.grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .border-l {
+    border-left: none;
+  }
+  
+  .grid {
+    display: block;
+  }
+  
+  .col-span-4,
+  .col-span-8 {
+    width: 100%;
+  }
+}

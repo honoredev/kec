@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './styles/header-responsive.css';
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer;
+  }
+  
+  .rounded-card {
+    @apply rounded-xl overflow-hidden;
+  }
+  
+  .rounded-image {
+    @apply rounded-lg;
+  }
+}
+
+/* Hide scrollbar for horizontal scroll on mobile */
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-x-auto {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Responsive table wrapper */
+@media (max-width: 640px) {
+  table {
+    font-size: 0.75rem;
+  }
+  
+  th, td {
+    padding: 0.5rem 0.25rem !important;
+  }
+}

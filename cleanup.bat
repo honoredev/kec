@@ -1,0 +1,18 @@
+@echo off
+del "src\components\AdModal.tsx"
+del "src\components\AuctionModal.tsx"
+del "src\components\MediaModal.tsx"
+del "src\components\UserModal.tsx"
+del "src\components\BreakingArticleModal.tsx"
+del "src\components\TrendingArticleModal.tsx"
+del "src\components\SportsArticleModal.tsx"
+del "src\components\AdminDashboard.tsx"
+del "src\components\AnalyticsDashboard.tsx"
+del "src\components\ContentManager.tsx"
+del "src\components\HomepageLayoutControl.tsx"
+del "src\components\NotificationCenter.tsx"
+del "src\components\ToolsPanel.tsx"
+rmdir /s /q "src\admin"
+rmdir /s /q "src\assets\bugesera_files"
+del "src\assets\bugesera.html"
+echo Cleanup completed
