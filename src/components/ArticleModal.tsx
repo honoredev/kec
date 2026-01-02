@@ -32,7 +32,7 @@ const ArticleModal = ({ isOpen, onClose, onSave, article }: ArticleModalProps) =
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/categories');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/categories');
         if (response.ok) {
           const data = await response.json();
           setCategories(data.categories || []);
@@ -80,8 +80,8 @@ const ArticleModal = ({ isOpen, onClose, onSave, article }: ArticleModalProps) =
     
     try {
       const url = article ? 
-        `http://localhost:3000/api/articles/${article.id}` : 
-        'http://localhost:3000/api/articles';
+        `https://kec-backend-1.onrender.com/api/articles/${article.id}` : 
+        'https://kec-backend-1.onrender.com/api/articles';
       const method = article ? 'PUT' : 'POST';
       
       const response = await fetch(url, {

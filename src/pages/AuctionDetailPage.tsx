@@ -31,7 +31,7 @@ const AuctionDetailPage = () => {
 
   useEffect(() => {
     if (id) {
-      fetch(`https://gazelle-back.onrender.com/api/auctions/${id}`)
+      fetch(`https://kec-backend-1.onrender.com/api/auctions/${id}`)
         .then(res => {
           if (!res.ok) throw new Error('Auction not found');
           return res.json();

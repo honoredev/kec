@@ -26,7 +26,7 @@ export default function AdminLogin() {
       }
       
       try {
-        const response = await fetch('https://gazelle-back.onrender.com/api/register', {
+        const response = await fetch('https://kec-backend-1.onrender.com/api/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function AdminLogin() {
     } else {
       // Login logic - authenticate with backend
       try {
-        const response = await fetch('https://gazelle-back.onrender.com/api/login', {
+        const response = await fetch('https://kec-backend-1.onrender.com/api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

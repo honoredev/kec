@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import NewsSidebar from "@/components/NewsSidebar";
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://gazelle-back.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://kec-backend-1.onrender.com/api';
 const API_BASE = API_URL.replace('/api', '');
 
 interface Advertisement {

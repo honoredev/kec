@@ -39,7 +39,7 @@ const KecHeader = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/categories');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/categories');
       const data = await response.json();
       setCategories(Array.isArray(data.categories) ? data.categories : []);
     } catch (error) {
@@ -129,7 +129,7 @@ const KecHeader = () => {
   useEffect(() => {
     const fetchActiveMatch = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/live-matches/active');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/live-matches/active');
         if (response.ok) {
           const data = await response.json();
           setActiveMatch(data);
@@ -141,7 +141,7 @@ const KecHeader = () => {
     
     const fetchActiveAudio = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/audios/active');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/audios/active');
         if (response.ok) {
           const data = await response.json();
           if (data) {

@@ -71,8 +71,8 @@ const ArticleDetail = () => {
       
       try {
         const [articleResponse, trendingResponse] = await Promise.all([
-          fetch(`http://localhost:3000/api/articles/${slug}`),
-          fetch('http://localhost:3000/api/articles')
+          fetch(`https://kec-backend-1.onrender.com/api/articles/${slug}`),
+          fetch('https://kec-backend-1.onrender.com/api/articles')
         ]);
         
         console.log('Response status:', articleResponse.status);
@@ -101,7 +101,7 @@ const ArticleDetail = () => {
         // Fetch comments
         if (articleResponse.ok) {
           try {
-            const commentsResponse = await fetch(`http://localhost:3000/api/articles/${slug}/comments`);
+            const commentsResponse = await fetch(`https://kec-backend-1.onrender.com/api/articles/${slug}/comments`);
             if (commentsResponse.ok) {
               const commentsData = await commentsResponse.json();
               const fetchedComments = commentsData.comments || [];
@@ -363,7 +363,7 @@ const ArticleDetail = () => {
                   setCommentAuthor('');
                   
                   try {
-                    const response = await fetch(`http://localhost:3000/api/articles/${article?.id}/comments`, {
+                    const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${article?.id}/comments`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ content: optimisticComment.content, author: optimisticComment.author })

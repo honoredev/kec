@@ -36,8 +36,8 @@ const BreakingArticleModal = ({ isOpen, onClose, onSave, article }: BreakingArti
     
     try {
       const url = article ? 
-        `http://localhost:3000/api/articles/${article.id}` : 
-        'http://localhost:3000/api/articles';
+        `https://kec-backend-1.onrender.com/api/articles/${article.id}` : 
+        'https://kec-backend-1.onrender.com/api/articles';
       const method = article ? 'PUT' : 'POST';
       
       const response = await fetch(url, {

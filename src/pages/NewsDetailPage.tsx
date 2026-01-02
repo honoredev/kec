@@ -53,7 +53,7 @@ const NewsDetailPage = () => {
     const fetchArticle = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://gazelle-back.onrender.com/api/articles/${id}`);
+        const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${id}`);
         const data = await response.json();
         
         if (data.article) {
@@ -62,7 +62,7 @@ const NewsDetailPage = () => {
           // Fetch related articles from same category
           if (data.article.category) {
             const relatedResponse = await fetch(
-              `https://gazelle-back.onrender.com/api/articles?category=${data.article.category.slug}&limit=3`
+              `https://kec-backend-1.onrender.com/api/articles?category=${data.article.category.slug}&limit=3`
             );
             const relatedData = await relatedResponse.json();
             if (relatedData.articles) {
@@ -90,7 +90,7 @@ const NewsDetailPage = () => {
   const getImageUrl = (imageUrl: string) => {
     if (!imageUrl) return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=500&fit=crop';
     if (imageUrl.startsWith('http')) return imageUrl;
-    return `https://gazelle-back.onrender.com${imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl}`;
+    return `https://kec-backend-1.onrender.com${imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl}`;
   };
 
   const formatDate = (dateString: string) => {

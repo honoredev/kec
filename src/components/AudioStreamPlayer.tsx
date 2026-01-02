@@ -5,13 +5,13 @@ const AudioStreamPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
-  const [streamUrl, setStreamUrl] = useState('http://localhost:8000/stream');
+  const [streamUrl, setStreamUrl] = useState('https://kec-backend-1.onrender.com/stream');
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const fetchActiveAudio = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/audios/active');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/audios/active');
         if (response.ok) {
           const data = await response.json();
           if (data && data.audioUrl) {

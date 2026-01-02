@@ -34,7 +34,7 @@ const Dashboard = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/articles');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/articles');
       if (response.ok) {
         const data = await response.json();
         setArticles(data.articles || []);
@@ -99,7 +99,7 @@ const Dashboard = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/categories');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/categories');
       if (response.ok) {
         const data = await response.json();
         setCategories(data.categories || []);
@@ -114,7 +114,7 @@ const Dashboard = () => {
 
   const fetchVideos = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/videos');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/videos');
       if (response.ok) {
         const data = await response.json();
         setVideos(data.videos || []);
@@ -129,7 +129,7 @@ const Dashboard = () => {
 
   const fetchLiveMatches = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/live-matches');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/live-matches');
       if (response.ok) {
         const data = await response.json();
         setLiveMatches(data || []);
@@ -144,7 +144,7 @@ const Dashboard = () => {
 
   const fetchAudios = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/audios');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/audios');
       if (response.ok) {
         const data = await response.json();
         setAudios(data || []);
@@ -159,7 +159,7 @@ const Dashboard = () => {
 
   const fetchFunContent = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/fun');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/fun');
       if (response.ok) {
         const data = await response.json();
         setFunContent(data.funContent || []);
@@ -174,7 +174,7 @@ const Dashboard = () => {
 
   const fetchFinancialData = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/financial');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/financial');
       if (response.ok) {
         const data = await response.json();
         setFinancialData(data.financialData || []);
@@ -190,7 +190,7 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/articles');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/articles');
       if (response.ok) {
         const data = await response.json();
         setArticles(data.articles || []);
@@ -216,7 +216,7 @@ const Dashboard = () => {
   const handleDeleteArticle = async (id) => {
     if (confirm('Are you sure you want to delete this article?')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/articles/${id}`, {
+        const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${id}`, {
           method: 'DELETE'
         });
         if (response.ok) {
@@ -234,7 +234,7 @@ const Dashboard = () => {
   const handleDeleteVideo = async (id) => {
     if (confirm('Are you sure you want to delete this video?')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/videos/${id}`, {
+        const response = await fetch(`https://kec-backend-1.onrender.com/api/videos/${id}`, {
           method: 'DELETE'
         });
         if (response.ok) {
@@ -252,7 +252,7 @@ const Dashboard = () => {
   const handleDeleteCategory = async (id) => {
     if (confirm('Are you sure you want to delete this category?')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/categories/${id}`, {
+        const response = await fetch(`https://kec-backend-1.onrender.com/api/categories/${id}`, {
           method: 'DELETE'
         });
         if (response.ok) {
@@ -293,7 +293,7 @@ const Dashboard = () => {
       const article = articles.find(a => a.id === articleId);
       const currentStatus = article[`is${typeMap[type].charAt(0).toUpperCase() + typeMap[type].slice(1)}`];
       
-      const response = await fetch(`http://localhost:3000/api/articles/${articleId}/content-type`, {
+      const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${articleId}/content-type`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: typeMap[type], value: !currentStatus })
@@ -535,7 +535,7 @@ const Dashboard = () => {
                     formData.append('isActive', 'false');
                     
                     try {
-                      const response = await fetch('http://localhost:3000/api/audios', {
+                      const response = await fetch('https://kec-backend-1.onrender.com/api/audios', {
                         method: 'POST',
                         body: formData
                       });
@@ -552,14 +552,14 @@ const Dashboard = () => {
                 }}
                 onSetActive={async (id) => {
                   try {
-                    await fetch(`http://localhost:3000/api/audios/${id}`, {
+                    await fetch(`https://kec-backend-1.onrender.com/api/audios/${id}`, {
                       method: 'PUT',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ isActive: true })
                     });
                     audios.forEach(async (a) => {
                       if (a.id !== id && a.isActive) {
-                        await fetch(`http://localhost:3000/api/audios/${a.id}`, {
+                        await fetch(`https://kec-backend-1.onrender.com/api/audios/${a.id}`, {
                           method: 'PUT',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ isActive: false })
@@ -618,7 +618,7 @@ const Dashboard = () => {
                               onClick={async () => {
                                 if (confirm('Delete this audio?')) {
                                   try {
-                                    const response = await fetch(`http://localhost:3000/api/audios/${audio.id}`, { method: 'DELETE' });
+                                    const response = await fetch(`https://kec-backend-1.onrender.com/api/audios/${audio.id}`, { method: 'DELETE' });
                                     if (response.ok) {
                                       setAudios(audios.filter(a => a.id !== audio.id));
                                       toast.success('Audio deleted!');
@@ -680,7 +680,7 @@ const Dashboard = () => {
                               onClick={async () => {
                                 if (confirm('Delete this live match?')) {
                                   try {
-                                    const response = await fetch(`http://localhost:3000/api/live-matches/${match.id}`, { method: 'DELETE' });
+                                    const response = await fetch(`https://kec-backend-1.onrender.com/api/live-matches/${match.id}`, { method: 'DELETE' });
                                     if (response.ok) {
                                       setLiveMatches(liveMatches.filter(m => m.id !== match.id));
                                       toast.success('Live match deleted!');
@@ -829,7 +829,7 @@ const Dashboard = () => {
                             <Button variant="destructive" size="sm" onClick={async () => {
                               if (confirm('Delete this fun content?')) {
                                 try {
-                                  const response = await fetch(`http://localhost:3000/api/fun/${fun.id}`, { method: 'DELETE' });
+                                  const response = await fetch(`https://kec-backend-1.onrender.com/api/fun/${fun.id}`, { method: 'DELETE' });
                                   if (response.ok) {
                                     setFunContent(funContent.filter(f => f.id !== fun.id));
                                     toast.success('Fun content deleted!');
@@ -882,7 +882,7 @@ const Dashboard = () => {
                             <Button variant="destructive" size="sm" onClick={async () => {
                               if (confirm('Delete this financial data?')) {
                                 try {
-                                  const response = await fetch(`http://localhost:3000/api/financial/${financial.id}`, { method: 'DELETE' });
+                                  const response = await fetch(`https://kec-backend-1.onrender.com/api/financial/${financial.id}`, { method: 'DELETE' });
                                   if (response.ok) {
                                     setFinancialData(financialData.filter(f => f.id !== financial.id));
                                     toast.success('Financial data deleted!');
@@ -975,7 +975,7 @@ const Dashboard = () => {
         onClose={() => setCategoryModal({ isOpen: false, category: null })}
         onSave={async (categoryData) => {
           try {
-            const response = await fetch('http://localhost:3000/api/categories', {
+            const response = await fetch('https://kec-backend-1.onrender.com/api/categories', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -1004,7 +1004,7 @@ const Dashboard = () => {
         onClose={() => setVideoModal({ isOpen: false, video: null })}
         onSave={async (videoData) => {
           try {
-            const response = await fetch('http://localhost:3000/api/videos', {
+            const response = await fetch('https://kec-backend-1.onrender.com/api/videos', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -1051,7 +1051,7 @@ const Dashboard = () => {
         onSave={async (matchData) => {
           try {
             if (liveMatchModal.match) {
-              const response = await fetch(`http://localhost:3000/api/live-matches/${liveMatchModal.match.id}`, {
+              const response = await fetch(`https://kec-backend-1.onrender.com/api/live-matches/${liveMatchModal.match.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(matchData)
@@ -1062,7 +1062,7 @@ const Dashboard = () => {
                 toast.success('Live match updated!');
               }
             } else {
-              const response = await fetch('http://localhost:3000/api/live-matches', {
+              const response = await fetch('https://kec-backend-1.onrender.com/api/live-matches', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(matchData)
@@ -1087,7 +1087,7 @@ const Dashboard = () => {
         onSave={async (audioData) => {
           try {
             if (audioModal.audio) {
-              const response = await fetch(`http://localhost:3000/api/audios/${audioModal.audio.id}`, {
+              const response = await fetch(`https://kec-backend-1.onrender.com/api/audios/${audioModal.audio.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(audioData)
@@ -1098,7 +1098,7 @@ const Dashboard = () => {
                 toast.success('Audio updated!');
               }
             } else {
-              const response = await fetch('http://localhost:3000/api/audios', {
+              const response = await fetch('https://kec-backend-1.onrender.com/api/audios', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(audioData)
@@ -1121,7 +1121,7 @@ const Dashboard = () => {
         onClose={() => setFunModal({ isOpen: false, funContent: null })}
         onSave={async (formData) => {
           try {
-            const response = await fetch('http://localhost:3000/api/fun', {
+            const response = await fetch('https://kec-backend-1.onrender.com/api/fun', {
               method: 'POST',
               body: formData
             });

@@ -31,7 +31,7 @@ const CommentModal = ({ isOpen, onClose, articleId, articleTitle }: CommentModal
 
   const fetchComments = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/articles/${articleId}/comments`);
+      const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${articleId}/comments`);
       if (response.ok) {
         const data = await response.json();
         setComments(data.comments || []);
@@ -47,7 +47,7 @@ const CommentModal = ({ isOpen, onClose, articleId, articleTitle }: CommentModal
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/articles/${articleId}/comments`, {
+      const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${articleId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

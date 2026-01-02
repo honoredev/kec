@@ -64,7 +64,7 @@ const AuctionPage = () => {
     const fetchAuctions = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://gazelle-back.onrender.com/api/auctions?status=active&limit=50');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/auctions?status=active&limit=50');
         const data = await response.json();
         
         if (data.auctions) {
@@ -95,7 +95,7 @@ const AuctionPage = () => {
             endTime: new Date(auction.endTime),
             image: auction.images ? 
               (auction.images.startsWith('/uploads/') ? 
-                `https://gazelle-back.onrender.com${auction.images.split(',')[0].trim()}` : 
+                `https://kec-backend-1.onrender.com${auction.images.split(',')[0].trim()}` : 
                 auction.images.split(',')[0].trim()) : 
               'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=400&fit=crop',
             category: auction.category,
@@ -122,7 +122,7 @@ const AuctionPage = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('https://gazelle-back.onrender.com/api/articles?limit=10');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/articles?limit=10');
         const data = await response.json();
         
         if (data.articles) {
@@ -142,12 +142,12 @@ const AuctionPage = () => {
       return fallback;
     }
     if (imageUrl.startsWith('/uploads/')) {
-      return `https://gazelle-back.onrender.com${imageUrl}`;
+      return `https://kec-backend-1.onrender.com${imageUrl}`;
     }
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
     }
-    return `https://gazelle-back.onrender.com${imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl}`;
+    return `https://kec-backend-1.onrender.com${imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl}`;
   };
 
   const formatViews = (views: number) => {

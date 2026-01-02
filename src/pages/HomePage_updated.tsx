@@ -33,7 +33,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let url = 'http://localhost:3000/api/articles';
+        let url = 'https://kec-backend-1.onrender.com/api/articles';
         if (selectedCategory) {
           url += `?category=${encodeURIComponent(selectedCategory)}`;
         }
@@ -84,7 +84,7 @@ const HomePage = () => {
     
     const fetchVideos = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/videos');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/videos');
         if (response.ok) {
           const data = await response.json();
           setVideos(data.videos || []);
@@ -96,7 +96,7 @@ const HomePage = () => {
     
     const fetchFunContent = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/fun');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/fun');
         if (response.ok) {
           const data = await response.json();
           setFunContent(data.funContent || []);
@@ -220,7 +220,7 @@ const HomePage = () => {
                         <button 
                           onClick={async () => {
                             try {
-                              const response = await fetch(`http://localhost:3000/api/articles/${story.id}/like`, { method: 'POST' });
+                              const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { method: 'POST' });
                               if (response.ok) {
                                 const updatedArticle = await response.json();
                                 setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: updatedArticle.likes} : n));
@@ -244,7 +244,7 @@ const HomePage = () => {
                         <button 
                           onClick={async () => {
                             try {
-                              const response = await fetch(`http://localhost:3000/api/articles/${story.id}/share`, { method: 'POST' });
+                              const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { method: 'POST' });
                               if (response.ok) {
                                 const updatedArticle = await response.json();
                                 setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: updatedArticle.shares} : n));
@@ -578,7 +578,7 @@ const HomePage = () => {
                       <button 
                         onClick={async () => {
                           try {
-                            const response = await fetch(`http://localhost:3000/api/fun/${item.id}/like`, { 
+                            const response = await fetch(`https://kec-backend-1.onrender.com/api/fun/${item.id}/like`, { 
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' }
                             });

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://gazelle-back.onrender.com/api';
+const API_BASE_URL = 'https://kec-backend-1.onrender.com/api';
 
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const headers: HeadersInit = {

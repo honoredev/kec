@@ -12,7 +12,7 @@ const Fun = () => {
 
   const fetchFunContent = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/fun');
+      const response = await fetch('https://kec-backend-1.onrender.com/api/fun');
       if (response.ok) {
         const data = await response.json();
         setFunContent(data.funContent || []);
@@ -38,7 +38,7 @@ const Fun = () => {
 
   const handleLike = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/fun/${id}/like`, { 
+      const response = await fetch(`https://kec-backend-1.onrender.com/api/fun/${id}/like`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });

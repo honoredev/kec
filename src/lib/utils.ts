@@ -58,7 +58,7 @@ export function getTimeAgo(dateString: string | Date): string {
 }
 
 // API Configuration
-export const API_URL = import.meta.env.VITE_API_URL || 'https://gazelle-back.onrender.com/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://kec-backend-1.onrender.com/api';
 export const API_BASE = API_URL.replace('/api', '');
 
 // Helper function to get proper image URL

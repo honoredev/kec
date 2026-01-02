@@ -29,7 +29,7 @@ const NewsSidebar = () => {
   useEffect(() => {
     const fetchLatestNews = async () => {
       try {
-        const response = await fetch('https://gazelle-back.onrender.com/api/articles?limit=5');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/articles?limit=5');
         const data = await response.json();
         if (data.articles) {
           setLatestNews(data.articles);
@@ -46,7 +46,7 @@ const NewsSidebar = () => {
   useEffect(() => {
     const fetchAdvertisements = async () => {
       try {
-        const response = await fetch('https://gazelle-back.onrender.com/api/ads?limit=5');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/ads?limit=5');
         const data = await response.json();
         if (data.ads) {
           setAdvertisements(data.ads);
@@ -65,12 +65,12 @@ const NewsSidebar = () => {
       return fallback;
     }
     if (imageUrl.startsWith('/uploads/')) {
-      return `https://gazelle-back.onrender.com${imageUrl}`;
+      return `https://kec-backend-1.onrender.com${imageUrl}`;
     }
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
     }
-    return `https://gazelle-back.onrender.com${imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl}`;
+    return `https://kec-backend-1.onrender.com${imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl}`;
   };
 
   const formatViews = (views: number) => {

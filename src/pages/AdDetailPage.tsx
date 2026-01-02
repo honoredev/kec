@@ -12,7 +12,7 @@ const AdDetailPage = () => {
 
   useEffect(() => {
     if (id) {
-      fetch(`https://gazelle-back.onrender.com/api/ads/${id}`)
+      fetch(`https://kec-backend-1.onrender.com/api/ads/${id}`)
         .then(res => {
           if (!res.ok) {
             throw new Error(`HTTP ${res.status}: Ad not found`);

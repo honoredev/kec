@@ -10,7 +10,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/articles');
+        const response = await fetch('https://kec-backend-1.onrender.com/api/articles');
         if (response.ok) {
           const data = await response.json();
           const articles = data.articles || data;
