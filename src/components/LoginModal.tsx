@@ -65,8 +65,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
         const data = await response.json();
         
         if (response.ok) {
-          localStorage.setItem('adminToken', data.token);
-          localStorage.setItem('adminEmail', data.admin.email);
+          localStorage.setItem('adminToken', 'admin-authenticated');
           onClose();
           if (onSuccess) {
             onSuccess();
@@ -92,8 +91,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
         const data = await response.json();
         
         if (response.ok) {
-          localStorage.setItem('adminToken', data.token);
-          localStorage.setItem('adminEmail', data.admin.email);
+          localStorage.setItem('adminToken', 'admin-authenticated');
           onClose();
           if (onSuccess) {
             onSuccess();
