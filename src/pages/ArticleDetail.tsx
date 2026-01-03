@@ -158,44 +158,44 @@ const ArticleDetail = () => {
     <div className="min-h-screen bg-white">
       <KecHeader />
       
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-12 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8">
           {/* Main Article Content */}
-          <div className="col-span-12 lg:col-span-8">
+          <div className="col-span-1 lg:col-span-8">
         {/* Back Button */}
         <Link 
           to="/" 
-          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-8 text-sm transition-colors"
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 sm:mb-8 text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Articles
         </Link>
 
         {/* Page Header */}
-        <header className="text-center mb-10">
-          <Badge className="mb-4 bg-blue-100 text-blue-800 px-3 py-1 text-sm font-medium">
+        <header className="text-center mb-6 sm:mb-10">
+          <Badge className="mb-3 sm:mb-4 bg-blue-100 text-blue-800 px-3 py-1 text-sm font-medium">
             {article.category.name}
           </Badge>
           
-          <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight px-2">
             {article.title}
           </h1>
           
           {/* Main Article Image */}
           {article.imageUrl && (
-            <figure className="mb-6">
+            <figure className="mb-4 sm:mb-6">
               <img 
                 src={article.imageUrl} 
                 alt={article.title}
-                className="w-full h-64 md:h-96 object-cover mb-3"
+                className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover mb-2 sm:mb-3"
               />
-              <figcaption className="text-sm text-gray-600 italic">
+              <figcaption className="text-sm text-gray-600 italic px-2">
                 Figure 1: {article.title}
               </figcaption>
             </figure>
           )}
           
-          <div className="flex items-center justify-center gap-8 text-sm text-gray-600 border-t border-gray-200 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-gray-600 border-t border-gray-200 pt-4 px-2">
             <div className="flex items-center gap-2">
               <User className="w-4 h-4" />
               <span>{article.author.name}</span>
@@ -212,7 +212,7 @@ const ArticleDetail = () => {
         </header>
 
         {/* Article Body - Responsive Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-0">
           {(() => {
             // Use predefined column content or split at midpoint
             const allParagraphs = article.content.split('\n\n').filter(p => p.trim());
@@ -249,7 +249,7 @@ const ArticleDetail = () => {
                 elements.push(
                   <p 
                     key={`p-${pIndex}`} 
-                    className="mb-4 text-justify leading-relaxed text-gray-800"
+                    className="mb-3 sm:mb-4 text-justify leading-relaxed text-gray-800 text-sm sm:text-base"
                     style={{ fontFamily: 'Montserrat, sans-serif' }}
                   >
                     {paragraph.trim()}
@@ -264,7 +264,7 @@ const ArticleDetail = () => {
 
                 if (shouldInsertImage) {
                   elements.push(
-                    <figure key={`fig-${localImageCounter}`} className="mb-6 mt-2">
+                    <figure key={`fig-${localImageCounter}`} className="mb-4 sm:mb-6 mt-2">
                       <img
                         src={images[imageIndex]}
                         alt={`Figure ${localImageCounter}`}
@@ -283,7 +283,7 @@ const ArticleDetail = () => {
               // Add any remaining images at the end of the column
               while (imageIndex < images.length) {
                 elements.push(
-                  <figure key={`fig-end-${localImageCounter}`} className="mb-6 mt-2">
+                  <figure key={`fig-end-${localImageCounter}`} className="mb-4 sm:mb-6 mt-2">
                     <img
                       src={images[imageIndex]}
                       alt={`Figure ${localImageCounter}`}
@@ -319,14 +319,14 @@ const ArticleDetail = () => {
         </div>
 
         {/* Comments Section */}
-        <div id="comments" className="mt-12 border-t border-gray-200 pt-8">
-          <div className="flex items-center gap-2 mb-6">
-            <MessageCircle className="w-6 h-6 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Comments ({comments.length})</h2>
+        <div id="comments" className="mt-8 sm:mt-12 border-t border-gray-200 pt-6 sm:pt-8 px-2 sm:px-0">
+          <div className="flex items-center gap-2 mb-4 sm:mb-6">
+            <MessageCircle className="w-5 sm:w-6 h-5 sm:h-6 text-blue-600" />
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Comments ({comments.length})</h2>
           </div>
 
           {/* Comment Form */}
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
+          <div className="bg-gray-50 p-4 sm:p-6 rounded-lg mb-6 sm:mb-8">
             <h3 className="text-lg font-semibold mb-4">Leave a Comment</h3>
             <div className="space-y-4">
               <input
@@ -334,14 +334,14 @@ const ArticleDetail = () => {
                 placeholder="Your name"
                 value={commentAuthor}
                 onChange={(e) => setCommentAuthor(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               />
               <textarea
                 placeholder="Write your comment here..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm sm:text-base"
               />
               <button
                 onClick={async () => {
@@ -391,7 +391,7 @@ const ArticleDetail = () => {
                   }
                 }}
                 disabled={!newComment.trim() || !commentAuthor.trim() || submittingComment}
-                className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base"
               >
                 <Send className="w-4 h-4" />
                 {submittingComment ? 'Posting...' : 'Post Comment'}
@@ -400,21 +400,21 @@ const ArticleDetail = () => {
           </div>
 
           {/* Comments List */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {comments.map((comment) => (
-              <div key={comment.id} className="bg-white border border-gray-200 rounded-lg p-6">
+              <div key={comment.id} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-blue-600" />
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <User className="w-4 sm:w-5 h-4 sm:h-5 text-blue-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">{comment.author}</h4>
-                      <p className="text-sm text-gray-500">{new Date(comment.createdAt).toLocaleDateString()}</p>
+                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{comment.author}</h4>
+                      <p className="text-xs sm:text-sm text-gray-500">{new Date(comment.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </div>
-                <p className="text-gray-700 leading-relaxed">{comment.content}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{comment.content}</p>
               </div>
             ))}
           </div>
@@ -422,16 +422,16 @@ const ArticleDetail = () => {
           </div>
 
           {/* Sticky Sidebar */}
-          <div className="col-span-12 lg:col-span-4">
+          <div className="col-span-1 lg:col-span-4">
             <div className="sticky top-4">
               {/* Latest News */}
-              <div className="bg-white border border-gray-200 p-6 lg:h-screen lg:overflow-y-auto">
-                <div className="flex items-center gap-2 mb-6">
+              <div className="bg-white border border-gray-200 p-4 sm:p-6 lg:h-screen lg:overflow-y-auto">
+                <div className="flex items-center gap-2 mb-4 sm:mb-6">
                   <TrendingUp className="w-5 h-5 text-blue-600" />
-                  <h2 className="text-xl font-bold text-gray-900">Latest News</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Latest News</h2>
                 </div>
                 
-                <div className="space-y-5">
+                <div className="space-y-4 sm:space-y-5">
                   {trendingArticles
                     .filter(newsArticle => newsArticle.id !== article?.id)
                     .sort((a, b) => {
@@ -443,9 +443,8 @@ const ArticleDetail = () => {
                     })
                     .map((newsArticle, index) => (
                     <Link key={newsArticle.id} to={`/article/${newsArticle.slug}`} className="flex gap-3 group hover:bg-gray-50 p-2 -m-2 transition-colors">
-                      {/* Left Column - Thumbnail (25-30% width) */}
-                      <div className="w-24 h-24 flex-shrink-0 relative">
-                        
+                      {/* Left Column - Thumbnail */}
+                      <div className="w-20 sm:w-24 h-20 sm:h-24 flex-shrink-0 relative">
                         <img 
                           src={newsArticle.imageUrl || `https://picsum.photos/400/250?random=${newsArticle.id}`}
                           alt={newsArticle.title}
@@ -453,9 +452,9 @@ const ArticleDetail = () => {
                         />
                       </div>
                       
-                      {/* Right Column - Text (70-75% width) */}
+                      {/* Right Column - Text */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm text-gray-900 mb-2 line-clamp-3 group-hover:underline leading-tight">
+                        <h3 className="font-semibold text-xs sm:text-sm text-gray-900 mb-2 line-clamp-3 group-hover:underline leading-tight">
                           {newsArticle.title}
                         </h3>
                         <p className="text-xs text-gray-600">
