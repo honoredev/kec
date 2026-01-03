@@ -224,126 +224,388 @@ const HomePage = () => {
       
       <div className="max-w-7xl mx-auto px-4 py-6">
 
-      {/* Responsive Main Stories Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-        {/* First 12 articles as main stories */}
-        {filteredNews.slice(0, 12).map((story, index) => (
-          <Link key={story.id} to={`/article/${story.id}`} className="group block">
-            <div className="bg-white border-0 sm:border sm:border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="relative">
-                <img 
-                  src={story.imageUrl} 
-                  alt={story.title}
-                  className="w-full h-48 sm:h-56 lg:h-64 object-cover"
-                />
-                {story.breaking && (
-                  <span className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 text-xs font-bold">
-                    BREAKING
-                  </span>
-                )}
-                {story.trending && (
-                  <span className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 text-xs font-bold">
-                    TRENDING
-                  </span>
-                )}
-              </div>
-              <div className="p-4">
-                <div className="text-xs text-blue-600 font-bold uppercase mb-2">
-                  {story.category}
+      {/* Multi-Column Grid Layout - Original Desktop Design */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+        {/* Main Content - 8 columns */}
+        <div className="lg:col-span-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Latest News - Top Position (2x2) */}
+            <div className="md:col-span-1 lg:col-span-2 lg:row-span-2">
+              <div className="w-full h-auto border-0 sm:border sm:border-gray-200">
+                <div className="bg-[#021b41]/80 text-white px-4 py-2">
+                  <h3 className="font-bold text-sm uppercase">Inkuru Ziheruka</h3>
                 </div>
-                <h3 className="font-bold text-lg leading-tight mb-2 group-hover:underline line-clamp-3" style={{fontFamily: 'Montserrat, sans-serif'}}>
-                  {story.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {story.excerpt}
-                </p>
-                <div className="text-xs text-gray-500 mb-3 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
-                  By {story.author.name} • {story.readTime} • {formatViews(articleViews[story.id] || story.views)} views
-                </div>
-                <div className="flex items-center space-x-3 text-xs text-gray-500">
-                  <button 
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      try {
-                        const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { method: 'POST' });
-                        if (response.ok) {
-                          const updatedArticle = await response.json();
-                          setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: updatedArticle.likes} : n));
-                        }
-                      } catch (error) {
-                        console.error('Error liking article:', error);
-                      }
-                    }}
-                    className="flex items-center space-x-1 hover:text-red-500"
-                  >
-                    <Heart className="w-3 h-3" />
-                    <span>{story.likes || 0}</span>
-                  </button>
-                  <Link 
-                    to={`/article/${story.id}#comments`}
-                    className="flex items-center space-x-1 hover:text-blue-500"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MessageCircle className="w-3 h-3" />
-                    <span>{story.comments?.length || 0}</span>
-                  </Link>
-                  <button 
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      try {
-                        const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { method: 'POST' });
-                        if (response.ok) {
-                          const updatedArticle = await response.json();
-                          setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: updatedArticle.shares} : n));
-                        }
-                      } catch (error) {
-                        console.error('Error sharing article:', error);
-                      }
-                    }}
-                    className="flex items-center space-x-1 hover:text-blue-500"
-                  >
-                    <Share2 className="w-3 h-3" />
-                    <span>{story.shares || 0}</span>
-                  </button>
+                <div className="p-3 sm:p-6 space-y-4 sm:space-y-8">
+                  {paginatedNews.map((story) => (
+                    <div key={story.id} className="group">
+                      <Link to={`/article/${story.id}`} className="flex gap-3 sm:gap-6 mb-4">
+                        {/* Left Column - Image */}
+                        <div className="w-2/5 flex-shrink-0">
+                          <img 
+                            src={story.imageUrl} 
+                            alt={story.title}
+                            className="w-full h-24 sm:h-32 object-cover"
+                          />
+                        </div>
+                        
+                        {/* Right Column - Text */}
+                        <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
+                          <div className="text-xs text-blue-600 font-bold uppercase">
+                            {story.category}
+                          </div>
+                          <h4 className="font-bold text-sm sm:text-base leading-tight group-hover:underline line-clamp-2" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                            {story.title}
+                          </h4>
+                          <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                            {story.excerpt}
+                          </p>
+                          <div className="text-xs text-gray-500 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                            By {story.author.name} • {story.readTime} • {formatViews(articleViews[story.id] || story.views)} views
+                          </div>
+                        </div>
+                      </Link>
+                      
+                      {/* Interaction buttons */}
+                      <div className="flex items-center space-x-3 sm:space-x-4 text-xs text-gray-500 pl-3 sm:pl-6">
+                        <button 
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { method: 'POST' });
+                              if (response.ok) {
+                                const updatedArticle = await response.json();
+                                setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: updatedArticle.likes} : n));
+                              }
+                            } catch (error) {
+                              console.error('Error liking article:', error);
+                            }
+                          }}
+                          className="flex items-center space-x-1 hover:text-red-500 transition-colors"
+                        >
+                          <Heart className="w-3 h-3" />
+                          <span>{story.likes || 0}</span>
+                        </button>
+                        <Link 
+                          to={`/article/${story.id}#comments`}
+                          className="flex items-center space-x-1 hover:text-blue-500 transition-colors"
+                        >
+                          <MessageCircle className="w-3 h-3" />
+                          <span>{story.comments?.length || 0}</span>
+                        </Link>
+                        <button 
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { method: 'POST' });
+                              if (response.ok) {
+                                const updatedArticle = await response.json();
+                                setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: updatedArticle.shares} : n));
+                              }
+                            } catch (error) {
+                              console.error('Error sharing article:', error);
+                            }
+                          }}
+                          className="flex items-center space-x-1 hover:text-blue-500 transition-colors"
+                        >
+                          <Share2 className="w-3 h-3" />
+                          <span>{story.shares || 0}</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      {[...Array(totalPages)].map((_, i) => (
+                        <button
+                          key={i + 1}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className={`px-2 sm:px-3 py-1 text-xs sm:text-sm border ${
+                            currentPage === i + 1
+                              ? 'bg-[#021b41] text-white border-[#021b41]'
+                              : 'border-gray-300 hover:bg-gray-100'
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          </Link>
-        ))}
-      </div>
 
-      {/* Remaining Articles - Small Layout */}
-      <div className="border-t border-gray-200 pt-8">
-        <h2 className="text-2xl font-bold mb-6" style={{fontFamily: 'Montserrat, sans-serif'}}>More News</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNews.slice(12).map((story) => (
-            <Link key={story.id} to={`/article/${story.id}`} className="group flex gap-4 hover:bg-gray-50 p-3 -m-3 transition-colors border-0 sm:border-b sm:border-gray-100 pb-4 sm:pb-3 mb-4 sm:mb-3">
-              {/* Small image on left */}
-              <div className="w-24 h-24 flex-shrink-0">
-                <img 
-                  src={story.imageUrl} 
-                  alt={story.title}
-                  className="w-full h-full object-cover"
-                />
+            {/* Featured Story - Main Position (2x1) */}
+            <div className="md:col-span-1 lg:col-span-2">
+              <div className="border-0 sm:border sm:border-gray-200 overflow-hidden h-auto lg:h-[600px]">
+                <div className="relative group overflow-hidden">
+                  <div 
+                    className="flex transition-transform duration-500 ease-in-out"
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                  >
+                    {sliderImages.map((story, index) => (
+                      <img 
+                        key={story.id}
+                        src={story.imageUrl} 
+                        alt={story.title}
+                        className="w-full h-48 sm:h-64 lg:h-80 object-cover flex-shrink-0"
+                      />
+                    ))}
+                  </div>
+                  <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex gap-2">
+                    {sliderImages[currentSlide]?.breaking && (
+                      <span className="bg-[#021b41]/80 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm font-bold">
+                        BREAKING
+                      </span>
+                    )}
+                    <span className="bg-blue-600/50 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm font-bold">
+                      FEATURED
+                    </span>
+                  </div>
+                  <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 flex gap-2">
+                    {sliderImages.map((_, index) => (
+                      <div 
+                        key={index} 
+                        className={`w-2 h-2 ${
+                          index === currentSlide ? 'bg-white' : 'bg-white/50'
+                        }`}
+                      ></div>
+                    ))}
+                  </div>
+                </div>
+                {sliderImages[currentSlide] && (
+                  <div className="p-3 sm:p-4 lg:p-6">
+                    <div className="text-xs sm:text-sm text-blue-600 font-bold uppercase mb-2">
+                      {sliderImages[currentSlide].category}
+                    </div>
+                    <h2 className="font-bold text-lg sm:text-xl lg:text-2xl leading-tight mb-3 hover:underline" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                      {sliderImages[currentSlide].title}
+                    </h2>
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-3">
+                      {sliderImages[currentSlide].excerpt}
+                    </p>
+                    <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                      <span>By {sliderImages[currentSlide].author?.name || 'Unknown'}</span>
+                      <span>{sliderImages[currentSlide].readTime} • {formatViews(articleViews[sliderImages[currentSlide].id] || sliderImages[currentSlide].views)} views</span>
+                    </div>
+                  </div>
+                )}
               </div>
+            </div>
+
+            {/* Main Stories Row - Hidden when category is selected */}
+            {!selectedCategory && (
+              <div className="md:col-span-2 lg:col-span-2 lg:mt-[5px]">
+                <div className="w-full lg:w-[400px]">
+                  <h3 className="text-base sm:text-lg font-bold border-b-2 border-gray-300 pb-2 mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>Inkuru Nyamukuru</h3>
+                  <div className="space-y-4">
+                    {regularStories.slice(0, 2).map((story) => (
+                      <Link key={story.id} to={`/article/${story.id}`} className="group block">
+                        <div className="h-auto lg:h-[429px] border-0 sm:border sm:border-gray-200 overflow-hidden">
+                          <img 
+                            src={story.imageUrl} 
+                            alt={story.title}
+                            className="w-full h-40 sm:h-48 lg:h-64 object-cover"
+                          />
+                          <div className="p-3 sm:p-4">
+                            <div className="text-xs text-blue-600 font-bold uppercase mb-2">
+                              {story.category}
+                            </div>
+                            <h4 className="font-bold text-base sm:text-lg leading-tight mb-2 group-hover:underline" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                              {story.title}
+                            </h4>
+                            <p className="text-sm text-gray-600 mb-2 line-clamp-3">
+                              {story.excerpt}
+                            </p>
+                            <div className="text-xs text-gray-500 mb-2 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                              By {story.author.name} • {story.readTime} • {formatViews(articleViews[story.id] || story.views)} views
+                            </div>
+                            <div className="flex items-center space-x-3 text-xs text-gray-500">
+                              <button 
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  try {
+                                    const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { method: 'POST' });
+                                    if (response.ok) {
+                                      const updatedArticle = await response.json();
+                                      setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: updatedArticle.likes} : n));
+                                    }
+                                  } catch (error) {
+                                    console.error('Error liking article:', error);
+                                  }
+                                }}
+                                className="flex items-center space-x-1 hover:text-red-500"
+                              >
+                                <Heart className="w-3 h-3" />
+                                <span>{story.likes || 0}</span>
+                              </button>
+                              <Link 
+                                to={`/article/${story.id}#comments`}
+                                className="flex items-center space-x-1 hover:text-blue-500"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <MessageCircle className="w-3 h-3" />
+                                <span>{story.comments?.length || 0}</span>
+                              </Link>
+                              <button 
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  try {
+                                    const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { method: 'POST' });
+                                    if (response.ok) {
+                                      const updatedArticle = await response.json();
+                                      setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: updatedArticle.shares} : n));
+                                    }
+                                  } catch (error) {
+                                    console.error('Error sharing article:', error);
+                                  }
+                                }}
+                                className="flex items-center space-x-1 hover:text-blue-500"
+                              >
+                                <Share2 className="w-3 h-3" />
+                                <span>{story.shares || 0}</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Sidebar - 4 columns */}
+        <div className="lg:col-span-4 space-y-4 lg:space-y-6">
+          {/* Live Audio Streaming Player */}
+          {audioStreamEnabled && <AudioStreamPlayer />}
+
+          {/* More News */}
+          <div className="border-0 sm:border sm:border-gray-200 h-auto">
+            <div className="bg-[#021b41]/80 text-white px-4 py-2">
+              <h3 className="font-bold text-sm uppercase">Izindi Inkuru</h3>
+            </div>
+            <div className="p-3 sm:p-6 space-y-4 sm:space-y-8">
+              {paginatedTrending.map((story) => (
+                <div key={story.id} className="group">
+                  <Link to={`/article/${story.id}`} className="flex gap-3 sm:gap-6 mb-4">
+                    <div className="w-2/5 flex-shrink-0">
+                      <img 
+                        src={story.imageUrl} 
+                        alt={story.title}
+                        className="w-full h-24 sm:h-32 object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
+                      <div className="text-xs text-blue-600 font-bold uppercase">
+                        {story.category}
+                      </div>
+                      <h4 className="font-bold text-sm sm:text-base leading-tight group-hover:underline line-clamp-2" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                        {story.title}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                        {story.excerpt}
+                      </p>
+                      <div className="text-xs text-gray-500 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                        By {story.author.name} • {story.readTime} • {formatViews(articleViews[story.id] || story.views)} views
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="flex items-center space-x-3 sm:space-x-4 text-xs text-gray-500 pl-3 sm:pl-6">
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { method: 'POST' });
+                          if (response.ok) {
+                            const updatedArticle = await response.json();
+                            setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: updatedArticle.likes} : n));
+                          }
+                        } catch (error) {
+                          console.error('Error liking article:', error);
+                        }
+                      }}
+                      className="flex items-center space-x-1 hover:text-red-500 transition-colors"
+                    >
+                      <Heart className="w-3 h-3" />
+                      <span>{story.likes || 0}</span>
+                    </button>
+                    <Link 
+                      to={`/article/${story.id}#comments`}
+                      className="flex items-center space-x-1 hover:text-blue-500 transition-colors"
+                    >
+                      <MessageCircle className="w-3 h-3" />
+                      <span>{story.comments?.length || 0}</span>
+                    </Link>
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { method: 'POST' });
+                          if (response.ok) {
+                            const updatedArticle = await response.json();
+                            setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: updatedArticle.shares} : n));
+                          }
+                        } catch (error) {
+                          console.error('Error sharing article:', error);
+                        }
+                      }}
+                      className="flex items-center space-x-1 hover:text-blue-500 transition-colors"
+                    >
+                      <Share2 className="w-3 h-3" />
+                      <span>{story.shares || 0}</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
               
-              {/* Content on right */}
-              <div className="flex-1 min-w-0">
-                <div className="text-xs text-blue-600 font-bold uppercase mb-1">
-                  {story.category}
+              {/* Pagination */}
+              {trendingTotalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+                  <button
+                    onClick={() => setTrendingPage(prev => Math.max(1, prev - 1))}
+                    disabled={trendingPage === 1}
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  {[...Array(trendingTotalPages)].map((_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setTrendingPage(i + 1)}
+                      className={`px-2 sm:px-3 py-1 text-xs sm:text-sm border ${
+                        trendingPage === i + 1
+                          ? 'bg-[#021b41] text-white border-[#021b41]'
+                          : 'border-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setTrendingPage(prev => Math.min(trendingTotalPages, prev + 1))}
+                    disabled={trendingPage === trendingTotalPages}
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
                 </div>
-                <h4 className="font-bold text-sm leading-tight mb-2 group-hover:underline line-clamp-2" style={{fontFamily: 'Montserrat, sans-serif'}}>
-                  {story.title}
-                </h4>
-                <p className="text-xs text-gray-600 line-clamp-2 mb-2">
-                  {story.excerpt}
-                </p>
-                <div className="text-xs text-gray-500 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
-                  {formatViews(articleViews[story.id] || story.views)} views
-                </div>
-              </div>
-            </Link>
-          ))}
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
