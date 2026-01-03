@@ -1,0 +1,23 @@
+# Backend Environment Variables
+# Add these to your backend .env file
+
+# JWT Secret (Generate a strong random key)
+JWT_SECRET=your-super-secure-jwt-secret-key-here-make-it-long-and-random
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=kec_database
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+
+# Admin Account (for initial setup)
+ADMIN_EMAIL=admin@kec.com
+ADMIN_PASSWORD=your-secure-admin-password
+
+# Security Settings
+BCRYPT_ROUNDS=12
+JWT_EXPIRES_IN=24h
+
+# CORS Settings
+FRONTEND_URL=https://your-frontend-domain.com

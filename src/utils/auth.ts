@@ -1,39 +1,41 @@
 // Secure authentication utilities
 export const AUTH_CONFIG = {
-  ADMIN_EMAIL: 'admin@kec.com',
   SESSION_TIMEOUT: 24 * 60 * 60 * 1000, // 24 hours
 };
 
-// Verify admin session
-export const isAuthenticated = (): boolean => {
+// Verify JWT token with backend
+export const isAuthenticated = async (): Promise<boolean> => {
   const token = localStorage.getItem('adminToken');
-  const email = localStorage.getItem('adminEmail');
   
-  if (!token || !email || email !== AUTH_CONFIG.ADMIN_EMAIL) {
+  if (!token) {
     return false;
   }
   
-  // Check if session is still valid (basic token format check)
   try {
-    const decoded = atob(token);
-    const parts = decoded.split(':');
-    if (parts.length !== 3 || parts[0] !== AUTH_CONFIG.ADMIN_EMAIL) {
-      return false;
-    }
+    const response = await fetch('https://kec-backend-1.onrender.com/api/admin/verify', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
     
-    const timestamp = parseInt(parts[1]);
-    const now = Date.now();
-    
-    // Check if session has expired
-    if (now - timestamp > AUTH_CONFIG.SESSION_TIMEOUT) {
+    if (response.ok) {
+      return true;
+    } else {
       logout();
       return false;
     }
-    
-    return true;
-  } catch {
+  } catch (error) {
+    logout();
     return false;
   }
+};
+
+// Simple sync check for immediate validation
+export const hasValidToken = (): boolean => {
+  const token = localStorage.getItem('adminToken');
+  return !!token;
 };
 
 // Logout function

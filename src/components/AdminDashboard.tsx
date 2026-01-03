@@ -24,7 +24,7 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <User className="w-4 h-4" />
-                <span>{adminEmail}</span>
+                <span>Backend Auth</span>
               </div>
               <button
                 onClick={handleLogout}
@@ -45,9 +45,9 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-3">
             <Lock className="w-5 h-5 text-green-600" />
             <div>
-              <h3 className="font-semibold text-green-900">Secure Session Active</h3>
+              <h3 className="font-semibold text-green-900">Secure Backend Session</h3>
               <p className="text-sm text-green-700">
-                You are logged in as the authorized administrator with encrypted authentication.
+                Authenticated via JWT token with database-stored credentials.
               </p>
             </div>
           </div>
@@ -106,19 +106,19 @@ export default function AdminDashboard() {
           <div className="space-y-3 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Single administrator account system</span>
+              <span>Database-stored credentials</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Password encrypted with SHA-256 hashing</span>
+              <span>Bcrypt password encryption</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Session-based authentication with timeout</span>
+              <span>JWT token authentication</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>No additional account creation allowed</span>
+              <span>Backend token verification</span>
             </div>
           </div>
         </div>

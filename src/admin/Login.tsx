@@ -9,19 +9,6 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Hardcoded secure admin credentials (encrypted)
-  const ADMIN_EMAIL = 'admin@kec.com';
-  const ADMIN_PASSWORD_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'; // 'hello' hashed with SHA-256
-  
-  // Simple SHA-256 hash function
-  const hashPassword = async (password: string): Promise<string> => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,21 +16,26 @@ export default function AdminLogin() {
     setError(null);
     
     try {
-      // Hash the entered password
-      const hashedPassword = await hashPassword(password);
+      const response = await fetch('https://kec-backend-1.onrender.com/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
       
-      // Verify credentials against hardcoded admin account
-      if (email === ADMIN_EMAIL && hashedPassword === ADMIN_PASSWORD_HASH) {
-        // Generate secure session token
-        const sessionToken = btoa(`${ADMIN_EMAIL}:${Date.now()}:${Math.random()}`);
-        localStorage.setItem('adminToken', sessionToken);
-        localStorage.setItem('adminEmail', ADMIN_EMAIL);
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Store secure JWT token
+        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('adminEmail', data.admin.email);
         navigate('/admin', { replace: true });
       } else {
-        setError('Invalid credentials. Access denied.');
+        setError(data.message || 'Invalid credentials. Access denied.');
       }
     } catch (err) {
-      setError('Authentication error. Please try again.');
+      setError('Network error. Please try again.');
     }
     
     setLoading(false);
@@ -61,7 +53,7 @@ export default function AdminLogin() {
             Admin Portal
           </h1>
           <p className="text-sm text-gray-600">
-            Secure access for the authorized administrator only
+            Secure backend authentication with database storage
           </p>
         </div>
 
@@ -69,10 +61,10 @@ export default function AdminLogin() {
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div className="text-sm">
-            <p className="font-semibold text-amber-900 mb-1">Single Admin Access</p>
+            <p className="font-semibold text-amber-900 mb-1">Authorized Access Only</p>
             <p className="text-amber-700">
-              Only one authorized administrator account exists. 
-              No additional accounts can be created.
+              Only authorized administrators can access this portal.
+              Contact system administrator for access.
             </p>
           </div>
         </div>
@@ -101,13 +93,13 @@ export default function AdminLogin() {
               required
               autoComplete="email"
               inputMode="email"
-              placeholder="admin@kec.com"
+              placeholder="Enter admin email"
               className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none" 
               style={{ fontSize: '16px' }}
               value={email} 
               onChange={(e)=>setEmail(e.target.value)} 
             />
-            <p className="text-xs text-gray-500">Only the authorized admin email is accepted</p>
+            <p className="text-xs text-gray-500">Must be an authorized admin email</p>
           </div>
           
           <div className="space-y-2">
@@ -155,7 +147,7 @@ export default function AdminLogin() {
         {/* Footer Note */}
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
-            🔒 Secure single-admin portal with encrypted authentication
+            🔒 Secure backend authentication with JWT tokens and bcrypt encryption
           </p>
         </div>
       </div>
