@@ -1,12 +1,5 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import AdminDashboard from '../components/AdminDashboard';
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    navigate('/dashboard');
-  }, [navigate]);
-
-  return <div>Redirecting...</div>;
+  return <AdminDashboard />;
 }

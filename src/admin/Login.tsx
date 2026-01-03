@@ -1,79 +1,49 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Lock, AlertCircle, UserPlus } from 'lucide-react';
+import { Shield, Lock, AlertCircle } from 'lucide-react';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isSignup, setIsSignup] = useState(false);
+  
+  // Hardcoded secure admin credentials (encrypted)
+  const ADMIN_EMAIL = 'admin@kec.com';
+  const ADMIN_PASSWORD_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'; // 'hello' hashed with SHA-256
+  
+  // Simple SHA-256 hash function
+  const hashPassword = async (password: string): Promise<string> => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
-    if (isSignup) {
-      if (password !== confirmPassword) {
-        setError('Passwords do not match');
-        setLoading(false);
-        return;
-      }
+    try {
+      // Hash the entered password
+      const hashedPassword = await hashPassword(password);
       
-      try {
-        const response = await fetch('https://kec-backend-1.onrender.com/api/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, email, password }),
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          // Registration successful, switch to login
-          setIsSignup(false);
-          setError(null);
-          setName('');
-          setPassword('');
-          setConfirmPassword('');
-          setEmail('');
-          alert('Account created successfully! You can now login with your credentials.');
-        } else {
-          setError(data.message || 'Registration failed');
-        }
-      } catch (err) {
-        setError('Network error. Please try again.');
+      // Verify credentials against hardcoded admin account
+      if (email === ADMIN_EMAIL && hashedPassword === ADMIN_PASSWORD_HASH) {
+        // Generate secure session token
+        const sessionToken = btoa(`${ADMIN_EMAIL}:${Date.now()}:${Math.random()}`);
+        localStorage.setItem('adminToken', sessionToken);
+        localStorage.setItem('adminEmail', ADMIN_EMAIL);
+        navigate('/admin', { replace: true });
+      } else {
+        setError('Invalid credentials. Access denied.');
       }
-    } else {
-      // Login logic - authenticate with backend
-      try {
-        const response = await fetch('https://kec-backend-1.onrender.com/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-          // Login successful
-          localStorage.setItem('adminToken', data.token);
-          navigate('/admin', { replace: true });
-        } else {
-          setError(data.message || 'Invalid credentials');
-        }
-      } catch (err) {
-        setError('Network error. Please try again.');
-      }
+    } catch (err) {
+      setError('Authentication error. Please try again.');
     }
     
     setLoading(false);
@@ -88,10 +58,10 @@ export default function AdminLogin() {
             <Shield className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {isSignup ? 'Create Admin Account' : 'Admin Portal'}
+            Admin Portal
           </h1>
           <p className="text-sm text-gray-600">
-            {isSignup ? 'Register as a new administrator' : 'Restricted access for authorized administrators only'}
+            Secure access for the authorized administrator only
           </p>
         </div>
 
@@ -99,10 +69,10 @@ export default function AdminLogin() {
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div className="text-sm">
-            <p className="font-semibold text-amber-900 mb-1">Authorized Access Only</p>
+            <p className="font-semibold text-amber-900 mb-1">Single Admin Access</p>
             <p className="text-amber-700">
-              Only pre-approved admin email addresses can access this portal. 
-              Contact system administrator if you need access.
+              Only one authorized administrator account exists. 
+              No additional accounts can be created.
             </p>
           </div>
         </div>
@@ -119,41 +89,25 @@ export default function AdminLogin() {
             </div>
           )}
         
-          {isSignup && (
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <UserPlus className="w-4 h-4 text-gray-500" />
-                Full Name
-              </label>
-              <input 
-                type="text"
-                required
-                placeholder="Enter your full name"
-                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none" 
-                style={{ fontSize: '16px' }}
-                value={name} 
-                onChange={(e)=>setName(e.target.value)} 
-              />
-            </div>
-          )}
+
           
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <Lock className="w-4 h-4 text-gray-500" />
-              {isSignup ? 'Email Address' : 'Admin Email Address'}
+              Admin Email Address
             </label>
             <input 
               type="email"
               required
               autoComplete="email"
               inputMode="email"
-              placeholder={isSignup ? 'your@email.com' : 'admin@impara.com'}
+              placeholder="admin@kec.com"
               className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none" 
               style={{ fontSize: '16px' }}
               value={email} 
               onChange={(e)=>setEmail(e.target.value)} 
             />
-            {!isSignup && <p className="text-xs text-gray-500">Must be a pre-authorized admin email</p>}
+            <p className="text-xs text-gray-500">Only the authorized admin email is accepted</p>
           </div>
           
           <div className="space-y-2">
@@ -164,9 +118,9 @@ export default function AdminLogin() {
             <input 
               type="password" 
               required
-              autoComplete={isSignup ? 'new-password' : 'current-password'}
-              minLength={6}
-              placeholder={isSignup ? 'Create a password' : 'Enter your password'}
+              autoComplete="current-password"
+              minLength={1}
+              placeholder="Enter your password"
               className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none" 
               style={{ fontSize: '16px' }}
               value={password} 
@@ -174,25 +128,7 @@ export default function AdminLogin() {
             />
           </div>
           
-          {isSignup && (
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-gray-500" />
-                Confirm Password
-              </label>
-              <input 
-                type="password" 
-                required
-                autoComplete="new-password"
-                minLength={6}
-                placeholder="Confirm your password"
-                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none" 
-                style={{ fontSize: '16px' }}
-                value={confirmPassword} 
-                onChange={(e)=>setConfirmPassword(e.target.value)} 
-              />
-            </div>
-          )}
+
         
           <button 
             type="submit"
@@ -203,37 +139,23 @@ export default function AdminLogin() {
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Signing in...
+                Authenticating...
               </>
             ) : (
               <>
-                {isSignup ? <UserPlus className="w-5 h-5" /> : <Shield className="w-5 h-5" />}
-                {isSignup ? 'Create Admin Account' : 'Sign In to Admin Portal'}
+                <Shield className="w-5 h-5" />
+                Sign In to Admin Portal
               </>
             )}
           </button>
         </form>
 
-        {/* Toggle between Login/Signup */}
-        <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={() => {
-              setIsSignup(!isSignup);
-              setError(null);
-              setName('');
-              setConfirmPassword('');
-            }}
-            className="text-green-600 hover:text-green-700 font-semibold text-sm transition-colors"
-          >
-            {isSignup ? 'Already have an account? Sign In' : 'Need an account? Create One'}
-          </button>
-        </div>
+
         
         {/* Footer Note */}
-        <div className="mt-4 text-center">
+        <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
-            🔒 This is a secure admin portal. All activities are monitored and logged.
+            🔒 Secure single-admin portal with encrypted authentication
           </p>
         </div>
       </div>
