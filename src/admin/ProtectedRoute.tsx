@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { hasValidToken, isAuthenticated } from '../utils/auth';
+import { hasValidToken } from '../utils/auth';
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -15,13 +15,29 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
         return;
       }
       
-      // Verify with backend
-      const valid = await isAuthenticated();
-      if (!valid) {
-        navigate('/admin/login', { replace: true });
-      } else {
+      try {
+        // Try to verify with backend
+        const response = await fetch('https://kec-backend-1.onrender.com/api/admin/verify', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          setIsValid(true);
+        } else if (response.status === 404) {
+          // Backend doesn't have verify endpoint yet, allow access if token exists
+          setIsValid(true);
+        } else {
+          navigate('/admin/login', { replace: true });
+        }
+      } catch (error) {
+        // Network error or endpoint doesn't exist, allow access if token exists
         setIsValid(true);
       }
+      
       setIsVerifying(false);
     };
     

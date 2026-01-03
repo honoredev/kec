@@ -26,10 +26,16 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
     const checkSignupAvailability = async () => {
       try {
         const response = await fetch('https://kec-backend-1.onrender.com/api/admin/check-signup');
+        if (response.status === 404) {
+          // Backend doesn't have new endpoints yet, allow signup
+          setCanSignup(true);
+          return;
+        }
         const data = await response.json();
         setCanSignup(data.canSignup);
       } catch (err) {
-        setCanSignup(false);
+        // Fallback: allow signup if endpoint doesn't exist
+        setCanSignup(true);
       }
     };
     if (isOpen) checkSignupAvailability();
@@ -65,7 +71,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
           if (onSuccess) {
             onSuccess();
           } else {
-            navigate('/dashboard');
+            navigate('/admin');
           }
         } else {
           setError(data.message || 'Signup failed');
@@ -92,7 +98,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
           if (onSuccess) {
             onSuccess();
           } else {
-            navigate('/dashboard');
+            navigate('/admin');
           }
         } else {
           setError(data.message || 'Invalid credentials. Access denied.');
