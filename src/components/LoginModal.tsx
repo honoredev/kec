@@ -18,26 +18,36 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
   const navigate = useNavigate();
 
   // Admin credentials
-  const ADMIN_EMAIL = 'admin@kec.com';
-  const ADMIN_PASSWORD = 'admin123';
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Simple admin authentication
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      localStorage.setItem('adminToken', 'admin-authenticated');
-      localStorage.setItem('adminUser', JSON.stringify({ email: ADMIN_EMAIL, role: 'admin' }));
-      onClose();
-      if (onSuccess) {
-        onSuccess();
+    try {
+      const response = await fetch('https://kec-backend-1.onrender.com/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('adminEmail', data.admin.email);
+        onClose();
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          navigate('/dashboard');
+        }
       } else {
-        navigate('/dashboard');
+        setError(data.message || 'Invalid credentials. Access denied.');
       }
-    } else {
-      setError('Invalid credentials. Use admin@kec.com / admin123');
+    } catch (err) {
+      setError('Network error. Please try again.');
     }
     
     setLoading(false);
@@ -72,13 +82,6 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
               <p>{error}</p>
             </div>
           )}
-
-          {/* Admin Credentials Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-sm font-medium text-blue-900 mb-1">Demo Admin Credentials:</p>
-            <p className="text-xs text-blue-700">Email: admin@kec.com</p>
-            <p className="text-xs text-blue-700">Password: admin123</p>
-          </div>
           
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -88,7 +91,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
             <Input
               type="email"
               required
-              placeholder="admin@kec.com"
+              placeholder="Enter admin email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-11"

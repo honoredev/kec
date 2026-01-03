@@ -91,13 +91,14 @@ export default function AdminLogin() {
             <input 
               type="email"
               required
-              autoComplete="email"
+              autoComplete="off"
               inputMode="email"
               placeholder="Enter admin email"
               className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none" 
               style={{ fontSize: '16px' }}
               value={email} 
-              onChange={(e)=>setEmail(e.target.value)} 
+              onChange={(e)=>setEmail(e.target.value)}
+              data-form-type="other"
             />
             <p className="text-xs text-gray-500">Must be an authorized admin email</p>
           </div>
@@ -110,13 +111,14 @@ export default function AdminLogin() {
             <input 
               type="password" 
               required
-              autoComplete="current-password"
+              autoComplete="off"
               minLength={1}
               placeholder="Enter your password"
               className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none" 
               style={{ fontSize: '16px' }}
               value={password} 
-              onChange={(e)=>setPassword(e.target.value)} 
+              onChange={(e)=>setPassword(e.target.value)}
+              data-form-type="other"
             />
           </div>
           
