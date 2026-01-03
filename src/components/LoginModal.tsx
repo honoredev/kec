@@ -71,7 +71,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
           if (onSuccess) {
             onSuccess();
           } else {
-            navigate('/admin');
+            navigate('/dashboard');
           }
         } else {
           setError(data.message || 'Signup failed');
@@ -98,7 +98,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }: LoginModalProps) => {
           if (onSuccess) {
             onSuccess();
           } else {
-            navigate('/admin');
+            navigate('/dashboard');
           }
         } else {
           setError(data.message || 'Invalid credentials. Access denied.');

@@ -71,7 +71,11 @@ const Dashboard = () => {
   // Check authentication on component mount
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
-    if (token === 'admin-authenticated') {
+    if (token && token !== 'admin-authenticated') {
+      // New JWT token authentication
+      setIsAuthenticated(true);
+    } else if (token === 'admin-authenticated') {
+      // Legacy authentication
       setIsAuthenticated(true);
     } else {
       setShowLoginModal(true);
