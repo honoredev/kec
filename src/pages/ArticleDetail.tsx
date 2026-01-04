@@ -29,9 +29,16 @@ interface Comment {
 
 const ArticleDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [article, setArticle] = useState<Article | null>(null);
-  const [trendingArticles, setTrendingArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [article, setArticle] = useState<Article | null>(() => {
+    // Try to get cached article data
+    const cached = sessionStorage.getItem(`article-${slug}`);
+    return cached ? JSON.parse(cached) : null;
+  });
+  const [trendingArticles, setTrendingArticles] = useState<Article[]>(() => {
+    const cached = sessionStorage.getItem('trending-articles');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [loading, setLoading] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [commentAuthor, setCommentAuthor] = useState('');
@@ -63,8 +70,13 @@ const ArticleDetail = () => {
     const fetchArticle = async () => {
       if (!slug) {
         console.log('No slug provided');
-        setLoading(false);
         return;
+      }
+      
+      // Check if we already have cached data
+      const cachedArticle = sessionStorage.getItem(`article-${slug}`);
+      if (cachedArticle && article) {
+        return; // Skip fetch if we have cached data
       }
       
       console.log('Fetching article with slug:', slug);
@@ -81,6 +93,8 @@ const ArticleDetail = () => {
           const data = await articleResponse.json();
           console.log('Article data:', data);
           setArticle(data);
+          // Cache the article data
+          sessionStorage.setItem(`article-${slug}`, JSON.stringify(data));
         } else {
           console.error('Failed to fetch article:', articleResponse.status, articleResponse.statusText);
         }
@@ -92,7 +106,10 @@ const ArticleDetail = () => {
           const sortedArticles = allArticles
             .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
             .sort(() => Math.random() - 0.5);
-          setTrendingArticles(sortedArticles.slice(0, 15));
+          const trendingList = sortedArticles.slice(0, 15);
+          setTrendingArticles(trendingList);
+          // Cache trending articles
+          sessionStorage.setItem('trending-articles', JSON.stringify(trendingList));
         }
         
         // Always set fallback comments first, then try to fetch real ones
@@ -117,8 +134,6 @@ const ArticleDetail = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
