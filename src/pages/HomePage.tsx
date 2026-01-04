@@ -224,26 +224,39 @@ const HomePage = () => {
       
       <div className="max-w-7xl mx-auto px-4 py-1">
 
-      {/* Mobile: 12 Large Main Stories - Same as Main Stories Layout */}
+      {/* Mobile: 12 Large Featured Stories - Same as Featured Story Layout */}
       <div className="block lg:hidden mb-8">
         <div className="space-y-4">
           {filteredNews.slice(0, 12).map((story) => (
             <Link key={story.id} to={`/article/${story.id}`} className="group block">
-              <div className="h-auto border-0 sm:border sm:border-gray-200 overflow-hidden">
-                <img 
-                  src={story.imageUrl} 
-                  alt={story.title}
-                  className="w-full h-40 sm:h-48 object-cover"
-                />
-                <div className="p-3 sm:p-4">
-                  <h4 className="font-bold text-base sm:text-lg leading-tight mb-2 group-hover:underline" style={{fontFamily: 'Montserrat, sans-serif'}}>
+              <div className="border-0 sm:border sm:border-gray-200 overflow-hidden h-auto lg:h-[600px]">
+                <div className="relative group overflow-hidden">
+                  <img 
+                    src={story.imageUrl} 
+                    alt={story.title}
+                    className="w-full h-48 sm:h-64 lg:h-80 object-cover flex-shrink-0"
+                  />
+                  <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex gap-2">
+                    {story.breaking && (
+                      <span className="bg-[#021b41]/80 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm font-bold">
+                        BREAKING
+                      </span>
+                    )}
+                    <span className="bg-blue-600/50 text-white px-2 sm:px-3 py-1 text-xs sm:text-sm font-bold">
+                      FEATURED
+                    </span>
+                  </div>
+                </div>
+                <div className="p-3 sm:p-4 lg:p-6">
+                  <h2 className="font-bold text-lg sm:text-xl lg:text-2xl leading-tight mb-3 hover:underline" style={{fontFamily: 'Montserrat, sans-serif'}}>
                     {story.title}
-                  </h4>
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-3">
+                  </h2>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-3">
                     {story.excerpt}
                   </p>
-                  <div className="text-xs text-gray-500 mb-2 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
-                    By {story.author.name} • {story.readTime} • {formatViews(articleViews[story.id] || story.views)} views
+                  <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 font-light mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                    <span>By {story.author?.name || 'Unknown'}</span>
+                    <span>{story.readTime} • {formatViews(articleViews[story.id] || story.views)} views</span>
                   </div>
                   <div className="flex items-center space-x-3 text-xs text-gray-500">
                     <button 
