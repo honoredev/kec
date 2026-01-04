@@ -125,14 +125,6 @@ const ArticleDetail = () => {
     fetchArticle();
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400"></div>
-      </div>
-    );
-  }
-
   if (!article) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -158,7 +150,7 @@ const ArticleDetail = () => {
     <div className="min-h-screen bg-white">
       <KecHeader />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8">
           {/* Main Article Content */}
           <div className="col-span-1 lg:col-span-8">

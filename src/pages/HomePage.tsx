@@ -4,15 +4,28 @@ import { Heart, MessageCircle, Share2 } from "lucide-react";
 import AudioStreamPlayer from "@/components/AudioStreamPlayer";
 
 const HomePage = () => {
-  const [news, setNews] = useState([]);
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [news, setNews] = useState(() => {
+    // Try to get cached data from sessionStorage
+    const cached = sessionStorage.getItem('homepage-news');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [videos, setVideos] = useState(() => {
+    const cached = sessionStorage.getItem('homepage-videos');
+    return cached ? JSON.parse(cached) : [];
+  });
+  const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [audioStreamEnabled, setAudioStreamEnabled] = useState(false);
   const [searchParams] = useSearchParams();
   const selectedCategory = searchParams.get('category');
-  const [articleViews, setArticleViews] = useState({});
-  const [funContent, setFunContent] = useState([]);
+  const [articleViews, setArticleViews] = useState(() => {
+    const cached = sessionStorage.getItem('homepage-views');
+    return cached ? JSON.parse(cached) : {};
+  });
+  const [funContent, setFunContent] = useState(() => {
+    const cached = sessionStorage.getItem('homepage-fun');
+    return cached ? JSON.parse(cached) : [];
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [trendingPage, setTrendingPage] = useState(1);
   const [culturePage, setCulturePage] = useState(1);
@@ -62,6 +75,10 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      // Only fetch if we don't have cached data
+      const hasCache = sessionStorage.getItem('homepage-news');
+      if (hasCache && news.length > 0) return;
+      
       try {
         // Parallel fetch for faster loading
         const [articlesRes, videosRes, funRes, categoriesRes] = await Promise.all([
@@ -104,18 +121,26 @@ const HomePage = () => {
           });
           setArticleViews(viewsMap);
           setNews(mappedArticles);
+          
+          // Cache the data
+          sessionStorage.setItem('homepage-news', JSON.stringify(mappedArticles));
+          sessionStorage.setItem('homepage-views', JSON.stringify(viewsMap));
         }
         
         // Process videos
         if (videosRes.ok) {
           const data = await videosRes.json();
-          setVideos(data.videos || []);
+          const videoData = data.videos || [];
+          setVideos(videoData);
+          sessionStorage.setItem('homepage-videos', JSON.stringify(videoData));
         }
         
         // Process fun content
         if (funRes.ok) {
           const data = await funRes.json();
-          setFunContent(data.funContent || []);
+          const funData = data.funContent || [];
+          setFunContent(funData);
+          sessionStorage.setItem('homepage-fun', JSON.stringify(funData));
         }
         
         // Process categories
@@ -126,10 +151,10 @@ const HomePage = () => {
         
       } catch (error) {
         console.error('Error fetching data:', error);
-        setNews([]);
-        setVideos([]);
-      } finally {
-        setLoading(false);
+        if (news.length === 0) {
+          setNews([]);
+          setVideos([]);
+        }
       }
     };
     
@@ -211,7 +236,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
       
-      <div className="max-w-7xl mx-auto px-4 mt-5">
+      <div className="max-w-7xl mx-auto px-4 mt-4">
 
       {/* Mobile: 12 Large Featured Stories - Same as Featured Story Layout */}
       <div className="block lg:hidden mb-8">
