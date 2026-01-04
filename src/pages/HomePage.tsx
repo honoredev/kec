@@ -222,9 +222,127 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
       
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-1">
 
-      {/* Multi-Column Grid Layout - Original Desktop Design */}
+      {/* Mobile: 12 Large Main Stories */}
+      <div className="block lg:hidden mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {filteredNews.slice(0, 12).map((story) => (
+            <Link key={story.id} to={`/article/${story.id}`} className="group block">
+              <div className="bg-white overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="relative">
+                  <img 
+                    src={story.imageUrl} 
+                    alt={story.title}
+                    className="w-full h-48 sm:h-56 object-cover"
+                  />
+                  {story.breaking && (
+                    <span className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 text-xs font-bold">
+                      BREAKING
+                    </span>
+                  )}
+                  {story.trending && (
+                    <span className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 text-xs font-bold">
+                      TRENDING
+                    </span>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-lg leading-tight mb-2 group-hover:underline line-clamp-3" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                    {story.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {story.excerpt}
+                  </p>
+                  <div className="text-xs text-gray-500 mb-3 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                    By {story.author.name} • {story.readTime} • {formatViews(articleViews[story.id] || story.views)} views
+                  </div>
+                  <div className="flex items-center space-x-3 text-xs text-gray-500">
+                    <button 
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { method: 'POST' });
+                          if (response.ok) {
+                            const updatedArticle = await response.json();
+                            setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: updatedArticle.likes} : n));
+                          }
+                        } catch (error) {
+                          console.error('Error liking article:', error);
+                        }
+                      }}
+                      className="flex items-center space-x-1 hover:text-red-500"
+                    >
+                      <Heart className="w-3 h-3" />
+                      <span>{story.likes || 0}</span>
+                    </button>
+                    <Link 
+                      to={`/article/${story.id}#comments`}
+                      className="flex items-center space-x-1 hover:text-blue-500"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MessageCircle className="w-3 h-3" />
+                      <span>{story.comments?.length || 0}</span>
+                    </Link>
+                    <button 
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { method: 'POST' });
+                          if (response.ok) {
+                            const updatedArticle = await response.json();
+                            setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: updatedArticle.shares} : n));
+                          }
+                        } catch (error) {
+                          console.error('Error sharing article:', error);
+                        }
+                      }}
+                      className="flex items-center space-x-1 hover:text-blue-500"
+                    >
+                      <Share2 className="w-3 h-3" />
+                      <span>{story.shares || 0}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+        
+        {/* Remaining Articles - Small Layout for Mobile */}
+        {filteredNews.length > 12 && (
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <h2 className="text-xl font-bold mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>More News</h2>
+            <div className="space-y-4">
+              {filteredNews.slice(12).map((story) => (
+                <Link key={story.id} to={`/article/${story.id}`} className="group flex gap-3 hover:bg-gray-50 p-3 -m-3 transition-colors">
+                  <div className="w-20 h-20 flex-shrink-0">
+                    <img 
+                      src={story.imageUrl} 
+                      alt={story.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-sm leading-tight mb-1 group-hover:underline line-clamp-2" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                      {story.title}
+                    </h4>
+                    <p className="text-xs text-gray-600 line-clamp-2 mb-1">
+                      {story.excerpt}
+                    </p>
+                    <div className="text-xs text-gray-500 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                      {formatViews(articleViews[story.id] || story.views)} views
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: Original Multi-Column Grid Layout */}
+      <div className="hidden lg:block">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
         {/* Main Content - 8 columns */}
         <div className="lg:col-span-8">
@@ -250,9 +368,6 @@ const HomePage = () => {
                         
                         {/* Right Column - Text */}
                         <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
-                          <div className="text-xs text-blue-600 font-bold uppercase">
-                            {story.category}
-                          </div>
                           <h4 className="font-bold text-sm sm:text-base leading-tight group-hover:underline line-clamp-2" style={{fontFamily: 'Montserrat, sans-serif'}}>
                             {story.title}
                           </h4>
@@ -388,9 +503,6 @@ const HomePage = () => {
                 </div>
                 {sliderImages[currentSlide] && (
                   <div className="p-3 sm:p-4 lg:p-6">
-                    <div className="text-xs sm:text-sm text-blue-600 font-bold uppercase mb-2">
-                      {sliderImages[currentSlide].category}
-                    </div>
                     <h2 className="font-bold text-lg sm:text-xl lg:text-2xl leading-tight mb-3 hover:underline" style={{fontFamily: 'Montserrat, sans-serif'}}>
                       {sliderImages[currentSlide].title}
                     </h2>
@@ -421,9 +533,6 @@ const HomePage = () => {
                             className="w-full h-40 sm:h-48 lg:h-64 object-cover"
                           />
                           <div className="p-3 sm:p-4">
-                            <div className="text-xs text-blue-600 font-bold uppercase mb-2">
-                              {story.category}
-                            </div>
                             <h4 className="font-bold text-base sm:text-lg leading-tight mb-2 group-hover:underline" style={{fontFamily: 'Montserrat, sans-serif'}}>
                               {story.title}
                             </h4>
@@ -512,9 +621,6 @@ const HomePage = () => {
                       />
                     </div>
                     <div className="flex-1 min-w-0 space-y-1 sm:space-y-2">
-                      <div className="text-xs text-blue-600 font-bold uppercase">
-                        {story.category}
-                      </div>
                       <h4 className="font-bold text-sm sm:text-base leading-tight group-hover:underline line-clamp-2" style={{fontFamily: 'Montserrat, sans-serif'}}>
                         {story.title}
                       </h4>
@@ -1123,7 +1229,6 @@ const HomePage = () => {
         </div>
         </div>
       </div>
-    </div>
   );
 };
 
