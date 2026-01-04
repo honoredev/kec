@@ -224,37 +224,25 @@ const HomePage = () => {
       
       <div className="max-w-7xl mx-auto px-4 py-1">
 
-      {/* Mobile: 12 Large Main Stories */}
+      {/* Mobile: 12 Large Main Stories - Same as Main Stories Layout */}
       <div className="block lg:hidden mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-4">
           {filteredNews.slice(0, 12).map((story) => (
             <Link key={story.id} to={`/article/${story.id}`} className="group block">
-              <div className="bg-white overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  <img 
-                    src={story.imageUrl} 
-                    alt={story.title}
-                    className="w-full h-48 sm:h-56 object-cover"
-                  />
-                  {story.breaking && (
-                    <span className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 text-xs font-bold">
-                      BREAKING
-                    </span>
-                  )}
-                  {story.trending && (
-                    <span className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 text-xs font-bold">
-                      TRENDING
-                    </span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-lg leading-tight mb-2 group-hover:underline line-clamp-3" style={{fontFamily: 'Montserrat, sans-serif'}}>
+              <div className="h-auto border-0 sm:border sm:border-gray-200 overflow-hidden">
+                <img 
+                  src={story.imageUrl} 
+                  alt={story.title}
+                  className="w-full h-40 sm:h-48 object-cover"
+                />
+                <div className="p-3 sm:p-4">
+                  <h4 className="font-bold text-base sm:text-lg leading-tight mb-2 group-hover:underline" style={{fontFamily: 'Montserrat, sans-serif'}}>
                     {story.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-3">
                     {story.excerpt}
                   </p>
-                  <div className="text-xs text-gray-500 mb-3 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
+                  <div className="text-xs text-gray-500 mb-2 font-light" style={{fontFamily: 'Montserrat, sans-serif'}}>
                     By {story.author.name} • {story.readTime} • {formatViews(articleViews[story.id] || story.views)} views
                   </div>
                   <div className="flex items-center space-x-3 text-xs text-gray-500">
