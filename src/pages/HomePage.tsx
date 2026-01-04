@@ -223,7 +223,7 @@ const HomePage = () => {
                   <img 
                     src={story.imageUrl} 
                     alt={story.title}
-                    className="w-full h-48 sm:h-64 lg:h-80 object-cover flex-shrink-0"
+                    className="w-full h-64 sm:h-64 lg:h-80 object-cover flex-shrink-0"
                   />
                   <div className="absolute top-2 sm:top-4 left-2 sm:left-4 flex gap-2">
                     {story.breaking && (
