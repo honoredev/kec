@@ -222,7 +222,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
       
-      <div className="max-w-7xl mx-auto px-4 py-1">
+      <div className="max-w-7xl mx-auto px-4 mt-5">
 
       {/* Mobile: 12 Large Featured Stories - Same as Featured Story Layout */}
       <div className="block lg:hidden mb-8">
@@ -342,8 +342,8 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Desktop: Original Multi-Column Grid Layout */}
-      <div className="hidden lg:block">
+      {/* All Content Sections - Visible on All Devices */}
+      <div className="mt-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
         {/* Main Content - 8 columns */}
         <div className="lg:col-span-8">
