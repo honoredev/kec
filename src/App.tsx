@@ -34,6 +34,7 @@ import AdvertisementsList from "@/admin/advertisements/AdvertisementsList";
 import AdvertisementForm from "@/admin/advertisements/AdvertisementForm";
 import AuctionsList from "@/admin/auctions/AuctionsList";
 import AuctionForm from "@/admin/auctions/AuctionForm";
+import BetsManagement from "@/admin/BetsManagement";
 import { TagPage } from "@/pages/TagPage";
 import Dashboard from "@/pages/Dashboard";
 import ArticleDetail from "@/pages/ArticleDetail";
@@ -151,6 +152,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AdvertisementForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/bets"
+              element={
+                <ProtectedRoute>
+                  <BetsManagement />
                 </ProtectedRoute>
               }
             />

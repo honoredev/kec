@@ -67,6 +67,17 @@ export default function AdminDashboard() {
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Bets</h3>
+            <p className="text-sm text-gray-600 mb-4">Manage prediction markets</p>
+            <button
+              onClick={() => navigate('/admin/bets')}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-colors"
+            >
+              Manage Bets
+            </button>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Advertisements</h3>
             <p className="text-sm text-gray-600 mb-4">Manage advertisements and promotions</p>
             <button
