@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [audios, setAudios] = useState([]);
   const [funContent, setFunContent] = useState([]);
   const [financialData, setFinancialData] = useState([]);
+  const [bets, setBets] = useState([]);
   const navigate = useNavigate();
 
   const fetchArticles = async () => {
@@ -54,6 +55,7 @@ const Dashboard = () => {
   const [liveMatchModal, setLiveMatchModal] = useState({ isOpen: false, match: null });
   const [audioModal, setAudioModal] = useState({ isOpen: false, audio: null });
   const [funModal, setFunModal] = useState({ isOpen: false, funContent: null });
+  const [betModal, setBetModal] = useState({ isOpen: false, bet: null });
   const [audioStreamEnabled, setAudioStreamEnabled] = useState(false);
 
   useEffect(() => {
@@ -89,7 +91,8 @@ const Dashboard = () => {
           fetchLiveMatches(),
           fetchAudios(),
           fetchFunContent(),
-          fetchFinancialData()
+          fetchFinancialData(),
+          fetchBets()
         ]);
         setLoading(false);
       };
@@ -184,6 +187,21 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error fetching financial data:', error);
       setFinancialData([]);
+    }
+  };
+
+  const fetchBets = async () => {
+    try {
+      const response = await fetch('https://kec-backend-1.onrender.com/api/bets');
+      if (response.ok) {
+        const data = await response.json();
+        setBets(data.bets || []);
+      } else {
+        setBets([]);
+      }
+    } catch (error) {
+      console.error('Error fetching bets:', error);
+      setBets([]);
     }
   };
 
@@ -309,6 +327,7 @@ const Dashboard = () => {
 
   const mainMenuItems = [
     { id: 'articles', label: 'Articles', icon: FileText, count: articles.length },
+    { id: 'bets', label: 'Bets', icon: TrendingUp, count: 0 },
     { id: 'videos', label: 'Videos', icon: FileText, count: videos.length },
     { id: 'live-matches', label: 'Live Matches', icon: TrendingUp, count: liveMatches.length },
     { id: 'audios', label: 'Audio Player', icon: TrendingUp, count: audios.length },
