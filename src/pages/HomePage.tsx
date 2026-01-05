@@ -4,6 +4,7 @@ import { Heart, MessageCircle, Share2 } from "lucide-react";
 import AudioStreamPlayer from "@/components/AudioStreamPlayer";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [news, setNews] = useState(() => {
     // Try to get cached data from sessionStorage
     const cached = sessionStorage.getItem('homepage-news');
@@ -33,6 +34,26 @@ const HomePage = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [voteMessage, setVoteMessage] = useState('');
+  const [bets, setBets] = useState([]);
+
+  const handleVote = async (betId: number, optionName: string, vote: string) => {
+    try {
+      const response = await fetch(`https://kec-backend-1.onrender.com/api/bets/${betId}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ optionName, vote: vote.toLowerCase() })
+      });
+      if (response.ok) {
+        const updatedBet = await response.json();
+        setBets(prev => prev.map(b => b.id === betId ? updatedBet : b));
+        setVoteMessage(`✓ Vote recorded: ${vote} on ${optionName}`);
+        setTimeout(() => setVoteMessage(''), 2000);
+      }
+    } catch (error) {
+      console.error('Error voting:', error);
+    }
+  };
 
   const generateViews = (articleId) => {
     const baseViews = Math.random() < 0.3 ? Math.floor(Math.random() * 500) + 100 : Math.floor(Math.random() * 50000) + 1000;
@@ -161,6 +182,21 @@ const HomePage = () => {
     fetchData();
   }, [selectedCategory]);
 
+  useEffect(() => {
+    const fetchBets = async () => {
+      try {
+        const response = await fetch('https://kec-backend-1.onrender.com/api/bets');
+        if (response.ok) {
+          const data = await response.json();
+          setBets(data.bets || []);
+        }
+      } catch (error) {
+        console.error('Error fetching bets:', error);
+      }
+    };
+    fetchBets();
+  }, []);
+
   // Filter stories based on selected category
   const filteredNews = selectedCategory ? news : news;
   const mainStoriesNews = selectedCategory ? [] : news;
@@ -234,9 +270,64 @@ const HomePage = () => {
   }, [news]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="">
       
-      <div className="max-w-7xl mx-auto px-4 mt-4">
+      {voteMessage && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+          {voteMessage}
+        </div>
+      )}
+      
+      {/* Multiple Polymarket-Style Betting Discussions - Fixed under header */}
+      <div className="bg-slate-900 border-b border-slate-700 py-4 fixed top-16 left-0 right-0 z-30">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-white font-bold text-sm">Prediction Markets</h3>
+            <button
+              onClick={() => navigate('/bets')}
+              className="text-blue-400 hover:text-blue-300 text-xs font-semibold"
+            >
+              View All →
+            </button>
+          </div>
+          <div className="flex overflow-x-auto gap-4 px-2 scrollbar-hide">
+            {bets.slice(0, 5).map((bet) => (
+              <div key={bet.id} className="flex-shrink-0 bg-slate-800 rounded px-3 py-3 min-w-[320px]">
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-white font-medium text-xs mb-2">{bet.title}</h3>
+                  {bet.options.length > 1 ? (
+                    <div className="space-y-1.5">
+                      {bet.options.map((option, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          {option.image && <img src={option.image} alt={option.name} className="w-6 h-6 rounded-full" />}
+                          <span className="text-white text-[10px] flex-1">{option.name}</span>
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => handleVote(bet.id, option.name, 'Yes')} className="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-0.5 rounded text-[9px] font-bold">Yes</button>
+                            <span className="text-emerald-400 text-[9px] font-bold">{option.yesPercent}%</span>
+                            <button onClick={() => handleVote(bet.id, option.name, 'No')} className="bg-rose-600 hover:bg-rose-700 text-white px-2 py-0.5 rounded text-[9px] font-bold">No</button>
+                            <span className="text-rose-400 text-[9px] font-bold">{option.noPercent}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => handleVote(bet.id, bet.options[0].name, 'Yes')} className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-bold">Yes {bet.options[0].yesPercent}%</button>
+                      <button onClick={() => handleVote(bet.id, bet.options[0].name, 'No')} className="flex-1 bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded text-xs font-bold">No {bet.options[0].noPercent}%</button>
+                    </div>
+                  )}
+                  <button onClick={() => navigate('/bets')} className="flex items-center gap-1 text-slate-400 hover:text-white mt-2">
+                    <MessageCircle className="w-3 h-3" />
+                    <span className="text-[9px]">{bet.comments} comments</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 pt-32">
 
       {/* Mobile: 12 Large Featured Stories - Same as Featured Story Layout */}
       <div className="block lg:hidden mb-8">

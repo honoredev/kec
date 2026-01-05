@@ -11,7 +11,7 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="min-h-screen bg-white">
       <KecHeader />
       
-      <main className="flex-1 pt-16">
+      <main className="flex-1">
         {children}
       </main>
       

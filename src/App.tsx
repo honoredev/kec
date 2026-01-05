@@ -39,6 +39,7 @@ import Dashboard from "@/pages/Dashboard";
 import ArticleDetail from "@/pages/ArticleDetail";
 import Fun from "@/pages/Fun";
 import FinancialGallery from "@/pages/FinancialGallery";
+import BetsPage from "@/pages/BetsPage";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/politics" element={<PoliticsPage />} />
             <Route path="/economics" element={<EconomicsPage />} />
             <Route path="/fun" element={<Fun />} />
+            <Route path="/bets" element={<BetsPage />} />
             <Route path="/financial-gallery" element={<FinancialGallery />} />
             <Route path="/auctions" element={<AuctionPage />} />
             <Route path="/auction/:id" element={<AuctionDetailPage />} />

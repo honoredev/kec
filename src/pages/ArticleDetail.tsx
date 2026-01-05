@@ -218,6 +218,47 @@ const ArticleDetail = () => {
           </div>
         </header>
 
+        {/* Discussion/Polling Section */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+            <h3 className="text-lg font-bold text-gray-900">Join the Discussion</h3>
+          </div>
+          
+          <div className="bg-white rounded-lg p-4 border border-blue-100">
+            <p className="text-sm text-gray-700 mb-4 font-medium">
+              What's your take on this story? Share your honest opinion:
+            </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              <button className="flex items-center justify-between bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-3 transition-colors group">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="font-medium text-green-800">Agree</span>
+                </div>
+                <div className="text-sm text-green-600 font-bold">67%</div>
+              </button>
+              
+              <button className="flex items-center justify-between bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg p-3 transition-colors group">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <span className="font-medium text-red-800">Disagree</span>
+                </div>
+                <div className="text-sm text-red-600 font-bold">33%</div>
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+              <span>1,247 people voted</span>
+              <span>Live results</span>
+            </div>
+            
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm">
+              🗣️ Join Discussion
+            </button>
+          </div>
+        </div>
+
         {/* Article Body - Responsive Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-0">
           {(() => {

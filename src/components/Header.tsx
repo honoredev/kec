@@ -156,7 +156,7 @@ const Header = () => {
     <motion.div 
       ref={headerRef}
       className={cn(
-        "fixed w-full transition-all duration-300 bg-gradient-to-r from-green-600 to-green-500 shadow-lg",
+        "fixed w-full transition-all duration-300 bg-gradient-to-r from-green-600 to-green-500 shadow-lg pb-0",
         isScrolled 
           ? "shadow-xl" 
           : ""
