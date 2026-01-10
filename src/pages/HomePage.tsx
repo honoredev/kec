@@ -281,7 +281,7 @@ const HomePage = () => {
       {/* Multiple Polymarket-Style Betting Discussions - Fixed under header */}
      
 
-      <div className="max-w-7xl mx-auto px-4 pt-32">
+      <div className="max-w-7xl mx-auto px-4">
 
       {/* Mobile: 12 Large Featured Stories - Same as Featured Story Layout */}
       <div className="block lg:hidden mb-8">
