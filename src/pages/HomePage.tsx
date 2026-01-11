@@ -6,36 +6,11 @@ import { ArticleSkeleton, FeaturedSkeleton, SidebarSkeleton } from "@/components
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [news, setNews] = useState(() => {
-    // Instant cache loading with timestamp check
-    try {
-      if (typeof Storage === 'undefined') return [];
-      const cached = sessionStorage.getItem('homepage-news');
-      const cacheTime = sessionStorage.getItem('homepage-cache-time');
-      const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000; // 5 min
-      
-      if (cached && isRecentCache) {
-        console.log('⚡ Instant cache hit - displaying immediately');
-        return JSON.parse(cached);
-      }
-      return [];
-    } catch (error) {
-      console.warn('Failed to load cached news:', error);
-      return [];
-    }
-  });
-  const [videos, setVideos] = useState(() => {
-    try {
-      if (typeof Storage === 'undefined') return [];
-      const cached = sessionStorage.getItem('homepage-videos');
-      const cacheTime = sessionStorage.getItem('homepage-cache-time');
-      const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000;
-      return cached && isRecentCache ? JSON.parse(cached) : [];
-    } catch (error) {
-      console.warn('Failed to load cached videos:', error);
-      return [];
-    }
-  });
+  const [news, setNews] = useState([]);
+  const [articlesLoaded, setArticlesLoaded] = useState(false);
+  const [videos, setVideos] = useState([]);
+  const [videosLoaded, setVideosLoaded] = useState(false);
+  const [funLoaded, setFunLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [audioStreamEnabled, setAudioStreamEnabled] = useState(false);
@@ -114,73 +89,79 @@ const HomePage = () => {
     }
   }, []);
   
-  // Lazy loading with Intersection Observer
+  // Lazy load videos when section becomes visible
   useEffect(() => {
-    // Feature detection for Intersection Observer
-    if (!('IntersectionObserver' in window)) {
-      return;
-    }
-    
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && hasMore && !loading) {
-          setPage(prev => prev + 1);
+        if (entries[0]?.isIntersecting && !videosLoaded) {
+          setVideosLoaded(true);
+          fetch('https://kec-backend-1.onrender.com/api/videos')
+            .then(res => res.json())
+            .then(data => {
+              const videoData = data.videos || [];
+              setVideos(videoData);
+              try {
+                if (typeof Storage !== 'undefined') {
+                  sessionStorage.setItem('homepage-videos', JSON.stringify(videoData));
+                }
+              } catch (error) {
+                console.warn('Failed to cache video data:', error);
+              }
+            })
+            .catch(error => console.warn('Videos loading failed:', error));
         }
       },
       { threshold: 0.1 }
     );
     
-    const sentinel = document.getElementById('scroll-sentinel');
-    if (sentinel) {
-      observer.observe(sentinel);
-    }
+    const videoSection = document.getElementById('video-section');
+    if (videoSection) observer.observe(videoSection);
     
-    return () => {
-      if (sentinel) {
-        observer.unobserve(sentinel);
-      }
-      observer.disconnect();
-    };
-  }, [hasMore, loading]);
+    return () => observer.disconnect();
+  }, [videosLoaded]);
 
+  // Lazy load fun content when section becomes visible
   useEffect(() => {
-    const fetchData = async () => {
-      // Show cached data immediately if available
-      const hasCache = sessionStorage.getItem('homepage-news');
-      if (hasCache && news.length > 0) {
-        console.log('📦 Using cached data for instant display');
-        return;
-      }
-      
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && !funLoaded) {
+          setFunLoaded(true);
+          fetch('https://kec-backend-1.onrender.com/api/fun')
+            .then(res => res.json())
+            .then(data => {
+              const funData = data.funContent || [];
+              setFunContent(funData);
+              try {
+                if (typeof Storage !== 'undefined') {
+                  sessionStorage.setItem('homepage-fun', JSON.stringify(funData));
+                }
+              } catch (error) {
+                console.warn('Failed to cache fun data:', error);
+              }
+            })
+            .catch(error => console.warn('Fun content loading failed:', error));
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    const funSection = document.getElementById('fun-section');
+    if (funSection) observer.observe(funSection);
+    
+    return () => observer.disconnect();
+  }, [funLoaded]);
+
+  // Lazy load articles when page loads
+  useEffect(() => {
+    if (!articlesLoaded) {
+      setArticlesLoaded(true);
       setLoading(true);
       
-      try {
-        // Ultra-fast parallel requests with aggressive timeouts
-        const fetchWithTimeout = (url, timeout = 3000) => {
-          return Promise.race([
-            fetch(url, {
-              headers: {
-                'Cache-Control': 'max-age=300', // 5 min cache
-                'Connection': 'keep-alive'
-              }
-            }),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Timeout')), timeout)
-            )
-          ]);
-        };
-        
-        // Fire all requests simultaneously for maximum speed
-        const [articlesRes, videosRes, funRes, categoriesRes] = await Promise.allSettled([
-          fetchWithTimeout('https://kec-backend-1.onrender.com/api/articles', 2000),
-          fetchWithTimeout('https://kec-backend-1.onrender.com/api/videos', 2000),
-          fetchWithTimeout('https://kec-backend-1.onrender.com/api/fun', 2000),
-          fetchWithTimeout('https://kec-backend-1.onrender.com/api/categories', 2000)
-        ]);
-        
-        // Process articles with instant UI update
-        if (articlesRes.status === 'fulfilled' && articlesRes.value.ok) {
-          const data = await articlesRes.value.json();
+      fetch('https://kec-backend-1.onrender.com/api/articles', {
+        headers: { 'Cache-Control': 'max-age=300', 'Connection': 'keep-alive' }
+      })
+        .then(res => res.json())
+        .then(data => {
           const articles = data.articles || data;
           const mappedArticles = Array.isArray(articles) ? articles.map(article => {
             let displayImage = article.imageUrl;
@@ -210,11 +191,9 @@ const HomePage = () => {
             viewsMap[article.id] = article.views;
           });
           
-          // Instant state update
           setArticleViews(viewsMap);
           setNews(mappedArticles);
           
-          // Aggressive caching with longer expiry
           try {
             if (typeof Storage !== 'undefined') {
               sessionStorage.setItem('homepage-news', JSON.stringify(mappedArticles));
@@ -224,50 +203,11 @@ const HomePage = () => {
           } catch (error) {
             console.warn('Failed to cache news data:', error);
           }
-        }
-        
-        // Process other data types instantly
-        if (videosRes.status === 'fulfilled' && videosRes.value.ok) {
-          const data = await videosRes.value.json();
-          const videoData = data.videos || [];
-          setVideos(videoData);
-          try {
-            if (typeof Storage !== 'undefined') {
-              sessionStorage.setItem('homepage-videos', JSON.stringify(videoData));
-            }
-          } catch (error) {
-            console.warn('Failed to cache video data:', error);
-          }
-        }
-        
-        if (funRes.status === 'fulfilled' && funRes.value.ok) {
-          const data = await funRes.value.json();
-          const funData = data.funContent || [];
-          setFunContent(funData);
-          try {
-            if (typeof Storage !== 'undefined') {
-              sessionStorage.setItem('homepage-fun', JSON.stringify(funData));
-            }
-          } catch (error) {
-            console.warn('Failed to cache fun data:', error);
-          }
-        }
-        
-        if (categoriesRes.status === 'fulfilled' && categoriesRes.value.ok) {
-          const data = await categoriesRes.value.json();
-          setCategories(Array.isArray(data.categories) ? data.categories : []);
-        }
-        
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        // Don't clear existing data on error
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, [selectedCategory]);
+        })
+        .catch(error => console.error('Error fetching articles:', error))
+        .finally(() => setLoading(false));
+    }
+  }, [articlesLoaded]);
 
   useEffect(() => {
     const fetchBets = async () => {
@@ -938,7 +878,7 @@ const HomePage = () => {
       </div>
 
       {/* Video Stories - Bottom Section */}
-      <div className="mt-8 lg:mt-12 border-t border-gray-200 pt-6 lg:pt-8">
+      <div id="video-section" className="mt-8 lg:mt-12 border-t border-gray-200 pt-6 lg:pt-8">
         {loading && news.length === 0 ? (
           <div className="h-6 bg-gray-300 rounded w-32 mb-4 animate-pulse"></div>
         ) : (
@@ -988,7 +928,7 @@ const HomePage = () => {
       </div>
 
       {/* Fun Zone Section */}
-      <div className="mt-8 lg:mt-12 border-t border-gray-200 pt-6 lg:pt-8">
+      <div id="fun-section" className="mt-8 lg:mt-12 border-t border-gray-200 pt-6 lg:pt-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-4 gap-4">
           <div className="flex items-center space-x-4">
             {loading && news.length === 0 ? (
