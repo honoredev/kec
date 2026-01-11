@@ -493,7 +493,11 @@ const HomePage = () => {
         {/* Remaining Articles - Small Layout for Mobile */}
         {filteredNews.length > 12 && (
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <h2 className="text-xl font-bold mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>More News</h2>
+            {loading && news.length === 0 ? (
+              <div className="h-6 bg-gray-300 rounded w-32 mb-4 animate-pulse"></div>
+            ) : (
+              <h2 className="text-xl font-bold mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>More News</h2>
+            )}
             <div className="space-y-4">
               {loading && news.length === 0 ? (
                 [...Array(8)].map((_, i) => (
@@ -538,7 +542,11 @@ const HomePage = () => {
             <div className="md:col-span-1 lg:col-span-2 lg:row-span-2">
               <div className="w-full h-auto border-0 sm:border sm:border-gray-200">
                 <div className="bg-[#021b41]/80 text-white px-4 py-2">
-                  <h3 className="font-bold text-sm uppercase">Inkuru Ziheruka</h3>
+                  {loading && news.length === 0 ? (
+                    <div className="h-4 bg-gray-400 rounded w-24 animate-pulse"></div>
+                  ) : (
+                    <h3 className="font-bold text-sm uppercase">Inkuru Ziheruka</h3>
+                  )}
                 </div>
                 <div className="p-3 sm:p-6 space-y-4 sm:space-y-8">
                   {loading && news.length === 0 ? (
@@ -798,7 +806,11 @@ const HomePage = () => {
           {/* More News */}
           <div className="border-0 sm:border sm:border-gray-200 h-auto">
             <div className="bg-[#021b41]/80 text-white px-4 py-2">
-              <h3 className="font-bold text-sm uppercase">Izindi Inkuru</h3>
+              {loading && news.length === 0 ? (
+                <div className="h-4 bg-gray-400 rounded w-24 animate-pulse"></div>
+              ) : (
+                <h3 className="font-bold text-sm uppercase">Izindi Inkuru</h3>
+              )}
             </div>
             <div className="p-3 sm:p-6 space-y-4 sm:space-y-8">
               {loading && news.length === 0 ? (
@@ -912,7 +924,11 @@ const HomePage = () => {
 
       {/* Video Stories - Bottom Section */}
       <div className="mt-8 lg:mt-12 border-t border-gray-200 pt-6 lg:pt-8">
-        <h2 className="text-xl sm:text-2xl font-bold mb-4 lg:mb-6 pb-2" style={{fontFamily: 'Montserrat, sans-serif'}}>Video Stories</h2>
+        {loading && news.length === 0 ? (
+          <div className="h-6 bg-gray-300 rounded w-32 mb-4 animate-pulse"></div>
+        ) : (
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 lg:mb-6 pb-2" style={{fontFamily: 'Montserrat, sans-serif'}}>Video Stories</h2>
+        )}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {videoStories.slice(0, 5).map((video) => {
             const getEmbedUrl = (url) => {
@@ -960,12 +976,17 @@ const HomePage = () => {
       <div className="mt-8 lg:mt-12 border-t border-gray-200 pt-6 lg:pt-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-4 gap-4">
           <div className="flex items-center space-x-4">
-           
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{fontFamily: 'Montserrat, sans-serif'}}>Trending Content</h2>
+            {loading && news.length === 0 ? (
+              <div className="h-8 bg-gray-300 rounded w-40 animate-pulse"></div>
+            ) : (
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{fontFamily: 'Montserrat, sans-serif'}}>Trending Content</h2>
+            )}
           </div>
-          <Link to="/fun" className="bg-[#021b41] text-white px-6 py-3 hover:bg-[#021b41]/90 transition-colors font-medium">
-            View All Fun Content →
-          </Link>
+          {!(loading && news.length === 0) && (
+            <Link to="/fun" className="bg-[#021b41] text-white px-6 py-3 hover:bg-[#021b41]/90 transition-colors font-medium">
+              View All Fun Content →
+            </Link>
+          )}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1074,7 +1095,11 @@ const HomePage = () => {
           {/* More Articles */}
           <div className="lg:col-span-4 border border-gray-200 h-auto">
             <div className="bg-[#021b41]/80 text-white px-4 py-2">
-              <h3 className="font-bold text-sm uppercase">Andi Makuru</h3>
+              {loading && news.length === 0 ? (
+                <div className="h-4 bg-gray-400 rounded w-24 animate-pulse"></div>
+              ) : (
+                <h3 className="font-bold text-sm uppercase">Andi Makuru</h3>
+              )}
             </div>
             <div className="p-6 space-y-8">
               {paginatedCulture.map((story) => (
@@ -1186,7 +1211,11 @@ const HomePage = () => {
           {/* Main Stories - Middle Column */}
           <div className="lg:col-span-4">
             <div className="w-full">
-              <h3 className="text-lg font-bold pb-2 mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>Inkuru Nyamukuru</h3>
+              {loading && news.length === 0 ? (
+                <div className="h-5 bg-gray-300 rounded w-32 mb-4 animate-pulse"></div>
+              ) : (
+                <h3 className="text-lg font-bold pb-2 mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>Inkuru Nyamukuru</h3>
+              )}
               <div className="space-y-4">
                 {regularStories.slice(0, 2).map((story) => (
                   <Link key={story.id} to={`/article/${story.id}`} className="group block">
@@ -1266,7 +1295,11 @@ const HomePage = () => {
           {/* Additional News */}
           <div className="lg:col-span-4 border border-gray-200 h-auto">
             <div className="bg-[#021b41]/80 text-white px-4 py-2">
-              <h3 className="font-bold text-sm uppercase">Ibindi Byose</h3>
+              {loading && news.length === 0 ? (
+                <div className="h-4 bg-gray-400 rounded w-24 animate-pulse"></div>
+              ) : (
+                <h3 className="font-bold text-sm uppercase">Ibindi Byose</h3>
+              )}
             </div>
             <div className="p-6 space-y-8">
               {paginatedEnvironment.map((story) => (
