@@ -8,6 +8,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#16a34a" />
     <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Preload critical API endpoints for 5G speed -->
+    <link rel="preconnect" href="https://kec-backend-1.onrender.com" crossorigin>
+    <link rel="dns-prefetch" href="https://kec-backend-1.onrender.com">
+    
     <link rel="icon" type="image/png" href="/ikarita_circular_icon.png" />
     <link rel="apple-touch-icon" href="/ikarita_circular_icon.png" />
     <title class="notranslate">Ikarita Media - Inkuru zigezweho mu Rwanda no hanze y'igihugu.</title>
@@ -22,6 +27,18 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@ikarita_media" />
     <meta name="twitter:image" content="/ikarita_circular_icon.png" />
+    
+    <!-- Preload critical resources -->
+    <script>
+      // Preload critical API data immediately
+      if ('serviceWorker' in navigator) {
+        // Prefetch critical API endpoints
+        fetch('https://kec-backend-1.onrender.com/api/articles', { 
+          method: 'GET',
+          headers: { 'Cache-Control': 'max-age=300' }
+        }).catch(() => {});
+      }
+    </script>
   </head>
 
   <body>

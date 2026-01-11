@@ -2,17 +2,37 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 import AudioStreamPlayer from "@/components/AudioStreamPlayer";
+import { ArticleSkeleton, FeaturedSkeleton, SidebarSkeleton } from "@/components/SkeletonLoader";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [news, setNews] = useState(() => {
-    // Try to get cached data from sessionStorage
-    const cached = sessionStorage.getItem('homepage-news');
-    return cached ? JSON.parse(cached) : [];
+    // Instant cache loading with timestamp check
+    try {
+      const cached = sessionStorage.getItem('homepage-news');
+      const cacheTime = sessionStorage.getItem('homepage-cache-time');
+      const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000; // 5 min
+      
+      if (cached && isRecentCache) {
+        console.log('⚡ Instant cache hit - displaying immediately');
+        return JSON.parse(cached);
+      }
+      return [];
+    } catch (error) {
+      console.warn('Failed to load cached news:', error);
+      return [];
+    }
   });
   const [videos, setVideos] = useState(() => {
-    const cached = sessionStorage.getItem('homepage-videos');
-    return cached ? JSON.parse(cached) : [];
+    try {
+      const cached = sessionStorage.getItem('homepage-videos');
+      const cacheTime = sessionStorage.getItem('homepage-cache-time');
+      const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000;
+      return cached && isRecentCache ? JSON.parse(cached) : [];
+    } catch (error) {
+      console.warn('Failed to load cached videos:', error);
+      return [];
+    }
   });
   const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -20,12 +40,26 @@ const HomePage = () => {
   const [searchParams] = useSearchParams();
   const selectedCategory = searchParams.get('category');
   const [articleViews, setArticleViews] = useState(() => {
-    const cached = sessionStorage.getItem('homepage-views');
-    return cached ? JSON.parse(cached) : {};
+    try {
+      const cached = sessionStorage.getItem('homepage-views');
+      const cacheTime = sessionStorage.getItem('homepage-cache-time');
+      const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000;
+      return cached && isRecentCache ? JSON.parse(cached) : {};
+    } catch (error) {
+      console.warn('Failed to load cached views:', error);
+      return {};
+    }
   });
   const [funContent, setFunContent] = useState(() => {
-    const cached = sessionStorage.getItem('homepage-fun');
-    return cached ? JSON.parse(cached) : [];
+    try {
+      const cached = sessionStorage.getItem('homepage-fun');
+      const cacheTime = sessionStorage.getItem('homepage-cache-time');
+      const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000;
+      return cached && isRecentCache ? JSON.parse(cached) : [];
+    } catch (error) {
+      console.warn('Failed to load cached fun content:', error);
+      return [];
+    }
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [trendingPage, setTrendingPage] = useState(1);
@@ -73,9 +107,14 @@ const HomePage = () => {
   
   // Lazy loading with Intersection Observer
   useEffect(() => {
+    // Feature detection for Intersection Observer
+    if (!('IntersectionObserver' in window)) {
+      return;
+    }
+    
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
+        if (entries[0]?.isIntersecting && hasMore && !loading) {
           setPage(prev => prev + 1);
         }
       },
@@ -91,27 +130,48 @@ const HomePage = () => {
       if (sentinel) {
         observer.unobserve(sentinel);
       }
+      observer.disconnect();
     };
   }, [hasMore, loading]);
 
   useEffect(() => {
     const fetchData = async () => {
-      // Only fetch if we don't have cached data
+      // Show cached data immediately if available
       const hasCache = sessionStorage.getItem('homepage-news');
-      if (hasCache && news.length > 0) return;
+      if (hasCache && news.length > 0) {
+        console.log('📦 Using cached data for instant display');
+        return;
+      }
+      
+      setLoading(true);
       
       try {
-        // Parallel fetch for faster loading
-        const [articlesRes, videosRes, funRes, categoriesRes] = await Promise.all([
-          fetch('https://kec-backend-1.onrender.com/api/articles'),
-          fetch('https://kec-backend-1.onrender.com/api/videos'),
-          fetch('https://kec-backend-1.onrender.com/api/fun'),
-          fetch('https://kec-backend-1.onrender.com/api/categories')
+        // Ultra-fast parallel requests with aggressive timeouts
+        const fetchWithTimeout = (url, timeout = 3000) => {
+          return Promise.race([
+            fetch(url, {
+              headers: {
+                'Cache-Control': 'max-age=300', // 5 min cache
+                'Connection': 'keep-alive'
+              }
+            }),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Timeout')), timeout)
+            )
+          ]);
+        };
+        
+        // Fire all requests simultaneously for maximum speed
+        const [articlesRes, videosRes, funRes, categoriesRes] = await Promise.allSettled([
+          fetchWithTimeout('https://kec-backend-1.onrender.com/api/articles', 2000),
+          fetchWithTimeout('https://kec-backend-1.onrender.com/api/videos', 2000),
+          fetchWithTimeout('https://kec-backend-1.onrender.com/api/fun', 2000),
+          fetchWithTimeout('https://kec-backend-1.onrender.com/api/categories', 2000)
         ]);
         
-        // Process articles
-        if (articlesRes.ok) {
-          const data = await articlesRes.json();
+        // Process articles with instant UI update
+        if (articlesRes.status === 'fulfilled' && articlesRes.value.ok) {
+          const data = await articlesRes.value.json();
           const articles = data.articles || data;
           const mappedArticles = Array.isArray(articles) ? articles.map(article => {
             let displayImage = article.imageUrl;
@@ -140,42 +200,54 @@ const HomePage = () => {
           mappedArticles.forEach(article => {
             viewsMap[article.id] = article.views;
           });
+          
+          // Instant state update
           setArticleViews(viewsMap);
           setNews(mappedArticles);
           
-          // Cache the data
-          sessionStorage.setItem('homepage-news', JSON.stringify(mappedArticles));
-          sessionStorage.setItem('homepage-views', JSON.stringify(viewsMap));
+          // Aggressive caching with longer expiry
+          try {
+            sessionStorage.setItem('homepage-news', JSON.stringify(mappedArticles));
+            sessionStorage.setItem('homepage-views', JSON.stringify(viewsMap));
+            sessionStorage.setItem('homepage-cache-time', Date.now().toString());
+          } catch (error) {
+            console.warn('Failed to cache news data:', error);
+          }
         }
         
-        // Process videos
-        if (videosRes.ok) {
-          const data = await videosRes.json();
+        // Process other data types instantly
+        if (videosRes.status === 'fulfilled' && videosRes.value.ok) {
+          const data = await videosRes.value.json();
           const videoData = data.videos || [];
           setVideos(videoData);
-          sessionStorage.setItem('homepage-videos', JSON.stringify(videoData));
+          try {
+            sessionStorage.setItem('homepage-videos', JSON.stringify(videoData));
+          } catch (error) {
+            console.warn('Failed to cache video data:', error);
+          }
         }
         
-        // Process fun content
-        if (funRes.ok) {
-          const data = await funRes.json();
+        if (funRes.status === 'fulfilled' && funRes.value.ok) {
+          const data = await funRes.value.json();
           const funData = data.funContent || [];
           setFunContent(funData);
-          sessionStorage.setItem('homepage-fun', JSON.stringify(funData));
+          try {
+            sessionStorage.setItem('homepage-fun', JSON.stringify(funData));
+          } catch (error) {
+            console.warn('Failed to cache fun data:', error);
+          }
         }
         
-        // Process categories
-        if (categoriesRes.ok) {
-          const data = await categoriesRes.json();
+        if (categoriesRes.status === 'fulfilled' && categoriesRes.value.ok) {
+          const data = await categoriesRes.value.json();
           setCategories(Array.isArray(data.categories) ? data.categories : []);
         }
         
       } catch (error) {
         console.error('Error fetching data:', error);
-        if (news.length === 0) {
-          setNews([]);
-          setVideos([]);
-        }
+        // Don't clear existing data on error
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -185,13 +257,20 @@ const HomePage = () => {
   useEffect(() => {
     const fetchBets = async () => {
       try {
-        const response = await fetch('https://kec-backend-1.onrender.com/api/bets');
+        const response = await Promise.race([
+          fetch('https://kec-backend-1.onrender.com/api/bets', {
+            headers: { 'Cache-Control': 'max-age=300' }
+          }),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), 2000)
+          )
+        ]);
         if (response.ok) {
           const data = await response.json();
           setBets(data.bets || []);
         }
       } catch (error) {
-        console.error('Error fetching bets:', error);
+        console.warn('Bets loading timeout - continuing without bets');
       }
     };
     fetchBets();
@@ -278,6 +357,14 @@ const HomePage = () => {
         </div>
       )}
       
+      {/* Loading indicator for fresh data */}
+      {loading && (
+        <div className="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm">Updating...</span>
+        </div>
+      )}
+      
       {/* Multiple Polymarket-Style Betting Discussions - Fixed under header */}
      
 
@@ -286,7 +373,12 @@ const HomePage = () => {
       {/* Mobile: 12 Large Featured Stories - Same as Featured Story Layout */}
       <div className="block lg:hidden mb-8">
         <div className="space-y-4">
-          {filteredNews.slice(0, 12).map((story) => (
+          {loading && news.length === 0 ? (
+            [...Array(12)].map((_, i) => (
+              <FeaturedSkeleton key={i} />
+            ))
+          ) : (
+            filteredNews.slice(0, 12).map((story) => (
             <Link key={story.id} to={`/article/${story.id}`} className="group block">
               <div className="border-0 sm:border sm:border-gray-200 overflow-hidden h-auto lg:h-[600px]">
                 <div className="relative group overflow-hidden">
@@ -321,17 +413,31 @@ const HomePage = () => {
                     <button 
                       onClick={async (e) => {
                         e.preventDefault();
+                        // Optimistic update for instant feedback
+                        const currentLikes = story.likes || 0;
+                        setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: currentLikes + 1} : n));
+                        
                         try {
-                          const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { method: 'POST' });
+                          const response = await Promise.race([
+                            fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/like`, { 
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' }
+                            }),
+                            new Promise((_, reject) => 
+                              setTimeout(() => reject(new Error('Timeout')), 3000)
+                            )
+                          ]);
                           if (response.ok) {
                             const updatedArticle = await response.json();
                             setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: updatedArticle.likes} : n));
                           }
                         } catch (error) {
-                          console.error('Error liking article:', error);
+                          // Revert on error
+                          setNews(prev => prev.map(n => n.id === story.id ? {...n, likes: currentLikes} : n));
+                          console.warn('Like failed:', error);
                         }
                       }}
-                      className="flex items-center space-x-1 hover:text-red-500"
+                      className="flex items-center space-x-1 hover:text-red-500 transition-colors"
                     >
                       <Heart className="w-3 h-3" />
                       <span>{story.likes || 0}</span>
@@ -347,17 +453,31 @@ const HomePage = () => {
                     <button 
                       onClick={async (e) => {
                         e.preventDefault();
+                        // Optimistic update for instant feedback
+                        const currentShares = story.shares || 0;
+                        setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: currentShares + 1} : n));
+                        
                         try {
-                          const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { method: 'POST' });
+                          const response = await Promise.race([
+                            fetch(`https://kec-backend-1.onrender.com/api/articles/${story.id}/share`, { 
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' }
+                            }),
+                            new Promise((_, reject) => 
+                              setTimeout(() => reject(new Error('Timeout')), 3000)
+                            )
+                          ]);
                           if (response.ok) {
                             const updatedArticle = await response.json();
                             setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: updatedArticle.shares} : n));
                           }
                         } catch (error) {
-                          console.error('Error sharing article:', error);
+                          // Revert on error
+                          setNews(prev => prev.map(n => n.id === story.id ? {...n, shares: currentShares} : n));
+                          console.warn('Share failed:', error);
                         }
                       }}
-                      className="flex items-center space-x-1 hover:text-blue-500"
+                      className="flex items-center space-x-1 hover:text-blue-500 transition-colors"
                     >
                       <Share2 className="w-3 h-3" />
                       <span>{story.shares || 0}</span>
@@ -366,7 +486,8 @@ const HomePage = () => {
                 </div>
               </div>
             </Link>
-          ))}
+          ))
+          )}
         </div>
         
         {/* Remaining Articles - Small Layout for Mobile */}
@@ -374,7 +495,12 @@ const HomePage = () => {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <h2 className="text-xl font-bold mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>More News</h2>
             <div className="space-y-4">
-              {filteredNews.slice(12).map((story) => (
+              {loading && news.length === 0 ? (
+                [...Array(8)].map((_, i) => (
+                  <ArticleSkeleton key={i} />
+                ))
+              ) : (
+                filteredNews.slice(12).map((story) => (
                 <Link key={story.id} to={`/article/${story.id}`} className="group flex gap-3 hover:bg-gray-50 p-3 -m-3 transition-colors">
                   <div className="w-20 h-20 flex-shrink-0">
                     <img 
@@ -395,7 +521,8 @@ const HomePage = () => {
                     </div>
                   </div>
                 </Link>
-              ))}
+              ))
+              )}
             </div>
           </div>
         )}
@@ -414,7 +541,10 @@ const HomePage = () => {
                   <h3 className="font-bold text-sm uppercase">Inkuru Ziheruka</h3>
                 </div>
                 <div className="p-3 sm:p-6 space-y-4 sm:space-y-8">
-                  {paginatedNews.map((story) => (
+                  {loading && news.length === 0 ? (
+                    <SidebarSkeleton />
+                  ) : (
+                    paginatedNews.map((story) => (
                     <div key={story.id} className="group">
                       <Link to={`/article/${story.id}`} className="flex gap-3 sm:gap-6 mb-4">
                         {/* Left Column - Image */}
@@ -485,7 +615,8 @@ const HomePage = () => {
                         </button>
                       </div>
                     </div>
-                  ))}
+                  ))
+                  )}
                   
                   {/* Pagination */}
                   {totalPages > 1 && (
@@ -670,7 +801,10 @@ const HomePage = () => {
               <h3 className="font-bold text-sm uppercase">Izindi Inkuru</h3>
             </div>
             <div className="p-3 sm:p-6 space-y-4 sm:space-y-8">
-              {paginatedTrending.map((story) => (
+              {loading && news.length === 0 ? (
+                <SidebarSkeleton />
+              ) : (
+                paginatedTrending.map((story) => (
                 <div key={story.id} className="group">
                   <Link to={`/article/${story.id}`} className="flex gap-3 sm:gap-6 mb-4">
                     <div className="w-2/5 flex-shrink-0">
@@ -736,7 +870,8 @@ const HomePage = () => {
                     </button>
                   </div>
                 </div>
-              ))}
+              ))
+              )}
               
               {/* Pagination */}
               {trendingTotalPages > 1 && (

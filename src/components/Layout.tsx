@@ -8,7 +8,7 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen min-h-[100svh] min-h-[-webkit-fill-available] bg-white">
       <KecHeader />
       
       <main className="flex-1">

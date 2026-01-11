@@ -1,8 +1,8 @@
+@import './styles/header-responsive.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './styles/header-responsive.css';
 
 @layer components {
   .card-hover {

@@ -41,17 +41,26 @@ import ArticleDetail from "@/pages/ArticleDetail";
 import Fun from "@/pages/Fun";
 import FinancialGallery from "@/pages/FinancialGallery";
 import BetsPage from "@/pages/BetsPage";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <Routes>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <AuthProvider>
+            <Routes>
             <Route path="/" element={<Layout><HomePage /></Layout>} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/article/:slug" element={<ArticleDetail />} />
@@ -194,6 +203,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

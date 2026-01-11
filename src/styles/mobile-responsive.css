@@ -258,7 +258,9 @@
   }
 
   .mobile-menu {
-    max-height: calc(100vh - 56px);
+    max-height: calc(100svh - 56px);
+    max-height: calc(100dvh - 56px);
+    max-height: calc(-webkit-fill-available - 56px);
     overflow-y: auto;
   }
 }

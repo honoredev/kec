@@ -418,8 +418,9 @@ const KecHeader = () => {
 export default KecHeader;
 
 // Add CSS for marquee animation and hide Google Translate toolbar
-const style = document.createElement('style');
-style.textContent = `
+if (typeof document !== 'undefined' && document.head) {
+  const style = document.createElement('style');
+  style.textContent = `
   @keyframes marquee {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
@@ -510,4 +511,5 @@ style.textContent = `
     max-width: 100% !important;
   }
 `;
-document.head.appendChild(style);
+  document.head.appendChild(style);
+}
