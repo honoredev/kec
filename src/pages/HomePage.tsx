@@ -9,6 +9,7 @@ const HomePage = () => {
   const [news, setNews] = useState(() => {
     // Instant cache loading with timestamp check
     try {
+      if (typeof Storage === 'undefined') return [];
       const cached = sessionStorage.getItem('homepage-news');
       const cacheTime = sessionStorage.getItem('homepage-cache-time');
       const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000; // 5 min
@@ -25,6 +26,7 @@ const HomePage = () => {
   });
   const [videos, setVideos] = useState(() => {
     try {
+      if (typeof Storage === 'undefined') return [];
       const cached = sessionStorage.getItem('homepage-videos');
       const cacheTime = sessionStorage.getItem('homepage-cache-time');
       const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000;
@@ -41,6 +43,7 @@ const HomePage = () => {
   const selectedCategory = searchParams.get('category');
   const [articleViews, setArticleViews] = useState(() => {
     try {
+      if (typeof Storage === 'undefined') return {};
       const cached = sessionStorage.getItem('homepage-views');
       const cacheTime = sessionStorage.getItem('homepage-cache-time');
       const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000;
@@ -52,6 +55,7 @@ const HomePage = () => {
   });
   const [funContent, setFunContent] = useState(() => {
     try {
+      if (typeof Storage === 'undefined') return [];
       const cached = sessionStorage.getItem('homepage-fun');
       const cacheTime = sessionStorage.getItem('homepage-cache-time');
       const isRecentCache = cacheTime && (Date.now() - parseInt(cacheTime)) < 300000;
@@ -101,8 +105,13 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    const enabled = localStorage.getItem('audioStreamEnabled') === 'true';
-    setAudioStreamEnabled(enabled);
+    try {
+      const enabled = localStorage.getItem('audioStreamEnabled') === 'true';
+      setAudioStreamEnabled(enabled);
+    } catch (error) {
+      console.warn('localStorage access denied:', error);
+      setAudioStreamEnabled(false);
+    }
   }, []);
   
   // Lazy loading with Intersection Observer
@@ -207,9 +216,11 @@ const HomePage = () => {
           
           // Aggressive caching with longer expiry
           try {
-            sessionStorage.setItem('homepage-news', JSON.stringify(mappedArticles));
-            sessionStorage.setItem('homepage-views', JSON.stringify(viewsMap));
-            sessionStorage.setItem('homepage-cache-time', Date.now().toString());
+            if (typeof Storage !== 'undefined') {
+              sessionStorage.setItem('homepage-news', JSON.stringify(mappedArticles));
+              sessionStorage.setItem('homepage-views', JSON.stringify(viewsMap));
+              sessionStorage.setItem('homepage-cache-time', Date.now().toString());
+            }
           } catch (error) {
             console.warn('Failed to cache news data:', error);
           }
@@ -221,7 +232,9 @@ const HomePage = () => {
           const videoData = data.videos || [];
           setVideos(videoData);
           try {
-            sessionStorage.setItem('homepage-videos', JSON.stringify(videoData));
+            if (typeof Storage !== 'undefined') {
+              sessionStorage.setItem('homepage-videos', JSON.stringify(videoData));
+            }
           } catch (error) {
             console.warn('Failed to cache video data:', error);
           }
@@ -232,7 +245,9 @@ const HomePage = () => {
           const funData = data.funContent || [];
           setFunContent(funData);
           try {
-            sessionStorage.setItem('homepage-fun', JSON.stringify(funData));
+            if (typeof Storage !== 'undefined') {
+              sessionStorage.setItem('homepage-fun', JSON.stringify(funData));
+            }
           } catch (error) {
             console.warn('Failed to cache fun data:', error);
           }
