@@ -90,7 +90,7 @@ const CommentModal = ({ isOpen, onClose, articleId, articleTitle }: CommentModal
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
           <div>
-            <h2 className="text-lg font-semibold">Comments</h2>
+            <h2 className="text-lg font-semibold">Ibitekerezo</h2>
             <p className="text-sm text-gray-600 truncate">{articleTitle}</p>
           </div>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -116,7 +116,7 @@ const CommentModal = ({ isOpen, onClose, articleId, articleTitle }: CommentModal
           
           {comments.length === 0 && (
             <div className="text-center py-8 text-gray-500">
-              <p>No comments yet. Be the first to comment!</p>
+              <p>Nta gitekerezo. Uba wa mbere gutanga igitekerezo!</p>
             </div>
           )}
         </div>
@@ -125,7 +125,7 @@ const CommentModal = ({ isOpen, onClose, articleId, articleTitle }: CommentModal
           <div className="grid grid-cols-2 gap-3">
             <input
               type="text"
-              placeholder="Your name"
+              placeholder="Izina ryawe"
               value={authorName}
               onChange={(e) => setAuthorName(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -133,7 +133,7 @@ const CommentModal = ({ isOpen, onClose, articleId, articleTitle }: CommentModal
             />
             <input
               type="email"
-              placeholder="Your email"
+              placeholder="Imeri yawe"
               value={authorEmail}
               onChange={(e) => setAuthorEmail(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -142,7 +142,7 @@ const CommentModal = ({ isOpen, onClose, articleId, articleTitle }: CommentModal
           </div>
           <div className="flex space-x-2">
             <textarea
-              placeholder="Write a comment..."
+              placeholder="Andika igitekerezo..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"

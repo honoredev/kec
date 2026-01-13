@@ -197,7 +197,7 @@ const ArticleDetail = () => {
                 className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover mb-2 sm:mb-3"
               />
               <figcaption className="text-sm text-gray-600 italic px-2">
-                Figure 1: {article.title}
+                {article.title}
               </figcaption>
             </figure>
           )}
@@ -319,7 +319,7 @@ const ArticleDetail = () => {
                         className="w-full h-auto border border-gray-200"
                       />
                       <figcaption className="text-sm text-gray-600 italic mt-2 text-center">
-                        Figure {localImageCounter}
+                       {localImageCounter}
                       </figcaption>
                     </figure>
                   );
@@ -338,7 +338,7 @@ const ArticleDetail = () => {
                       className="w-full h-auto border border-gray-200"
                     />
                     <figcaption className="text-sm text-gray-600 italic mt-2 text-center">
-                      Figure {localImageCounter}
+                      {localImageCounter}
                     </figcaption>
                   </figure>
                 );
