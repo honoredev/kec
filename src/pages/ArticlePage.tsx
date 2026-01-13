@@ -1,9 +1,55 @@
 import { useParams, Link } from "react-router-dom";
-import { hardcodedNews } from "@/data/hardcodedNews";
+import { useState, useEffect } from "react";
 
 const ArticlePage = () => {
   const { id } = useParams();
-  const story = hardcodedNews.find(story => story.id === id);
+  const [story, setStory] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [relatedStories, setRelatedStories] = useState([]);
+
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        const response = await fetch(`https://kec-backend-1.onrender.com/api/articles/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setStory(data);
+          
+          // Fetch related articles
+          const relatedResponse = await fetch(`https://kec-backend-1.onrender.com/api/articles?category=${data.category?.name}&limit=3`);
+          if (relatedResponse.ok) {
+            const relatedData = await relatedResponse.json();
+            const related = (relatedData.articles || relatedData).filter(s => s.id !== data.id).slice(0, 3);
+            setRelatedStories(related);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching article:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchArticle();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-300 rounded w-3/4 mx-auto mb-6"></div>
+          <div className="h-64 bg-gray-300 rounded mb-6"></div>
+          <div className="space-y-4">
+            <div className="h-4 bg-gray-300 rounded w-full"></div>
+            <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-300 rounded w-4/6"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!story) {
     return (
@@ -13,10 +59,6 @@ const ArticlePage = () => {
       </div>
     );
   }
-
-  const relatedStories = hardcodedNews
-    .filter(s => s.id !== story.id && s.category === story.category)
-    .slice(0, 3);
 
   return (
     <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
@@ -29,7 +71,7 @@ const ArticlePage = () => {
       <article className="max-w-2xl mx-auto">
         {/* Category */}
         <div className="text-sm font-bold uppercase tracking-wide text-blue-600 mb-2">
-          {story.category}
+          {story.category?.name || 'General'}
         </div>
 
         {/* Title */}
@@ -44,9 +86,9 @@ const ArticlePage = () => {
 
         {/* Byline */}
         <div className="border-t border-b border-gray-200 py-2 sm:py-3 mb-4 sm:mb-6 text-xs sm:text-sm">
-          <div className="font-bold">By {story.author.name}</div>
+          <div className="font-bold">By {story.author?.name || 'Unknown'}</div>
           <div className="text-gray-600">
-            {new Date(story.publishedAt).toLocaleDateString('en-US', { 
+            {new Date(story.publishedAt || story.createdAt).toLocaleDateString('en-US', { 
               year: 'numeric', 
               month: 'long', 
               day: 'numeric' 
@@ -121,31 +163,31 @@ const ArticlePage = () => {
         )}
       </article>
 
-      {/* Related Articles */}
-      {relatedStories.length > 0 && (
-        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200">
-          <h3 className="text-lg sm:text-xl font-serif font-bold mb-4 sm:mb-6">More in {story.category}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {relatedStories.map((related) => (
-              <Link key={related.id} to={`/article/${related.id}`} className="group">
-                <article>
-                  <img 
-                    src={related.imageUrl} 
-                    alt={related.title}
-                    className="w-full h-32 sm:h-40 object-cover mb-2 rounded-lg"
-                  />
-                  <h4 className="font-serif font-bold text-sm sm:text-base leading-tight group-hover:underline">
-                    {related.title}
-                  </h4>
-                  <div className="text-xs sm:text-sm text-gray-600 mt-1">
-                    By {related.author.name}
-                  </div>
-                </article>
-              </Link>
-            ))}
+        {/* Related Articles */}
+        {relatedStories.length > 0 && (
+          <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200">
+            <h3 className="text-lg sm:text-xl font-serif font-bold mb-4 sm:mb-6">More in {story.category?.name || 'This Category'}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {relatedStories.map((related) => (
+                <Link key={related.id} to={`/article/${related.id}`} className="group">
+                  <article>
+                    <img 
+                      src={related.imageUrl} 
+                      alt={related.title}
+                      className="w-full h-32 sm:h-40 object-cover mb-2 rounded-lg"
+                    />
+                    <h4 className="font-serif font-bold text-sm sm:text-base leading-tight group-hover:underline">
+                      {related.title}
+                    </h4>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1">
+                      By {related.author?.name || 'Unknown'}
+                    </div>
+                  </article>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };

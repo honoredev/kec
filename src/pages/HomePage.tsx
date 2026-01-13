@@ -882,7 +882,7 @@ const HomePage = () => {
         {loading && news.length === 0 ? (
           <div className="h-6 bg-gray-300 rounded w-32 mb-4 animate-pulse"></div>
         ) : (
-          <h2 className="text-xl sm:text-2xl font-bold mb-4 lg:mb-6 pb-2" style={{fontFamily: 'Montserrat, sans-serif'}}>Video Stories</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 lg:mb-6 pb-2" style={{fontFamily: 'Montserrat, sans-serif'}}>Videwo</h2>
         )}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {videoStories.slice(0, 5).map((video) => {
@@ -934,12 +934,12 @@ const HomePage = () => {
             {loading && news.length === 0 ? (
               <div className="h-8 bg-gray-300 rounded w-40 animate-pulse"></div>
             ) : (
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{fontFamily: 'Montserrat, sans-serif'}}>Trending Content</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900" style={{fontFamily: 'Montserrat, sans-serif'}}>Inkuru Zirikuvugwa Cyane</h2>
             )}
           </div>
           {!(loading && news.length === 0) && (
             <Link to="/fun" className="bg-[#021b41] text-white px-6 py-3 hover:bg-[#021b41]/90 transition-colors font-medium">
-              View All Fun Content →
+              Reba Inkuru Zose →
             </Link>
           )}
         </div>
