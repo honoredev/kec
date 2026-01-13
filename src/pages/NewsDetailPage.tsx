@@ -117,6 +117,23 @@ const NewsDetailPage = () => {
     );
   }
 
+  if (error || !article) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Article Not Found</h2>
+          <p className="text-gray-600 mb-6">{error || 'The article you are looking for does not exist.'}</p>
+          <Link to="/">
+            <Button className="bg-green-600 hover:bg-green-700">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // Parse tags from string to array
   const tags = article.tags ? article.tags.split(',').map(t => t.trim()).filter(t => t) : [];
 

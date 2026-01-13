@@ -140,15 +140,25 @@ const ArticleDetail = () => {
     fetchArticle();
   }, [slug]);
 
-  
+  if (!article) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Article Not Found</h1>
+          <Link to="/" className="text-gray-600 hover:underline">Return to Home</Link>
+        </div>
+      </div>
+    );
+  }
 
   // Parse additional images
   let additionalImages: string[] = [];
-  if (article.images) {
+  if (article && article.images) {
     try {
       additionalImages = JSON.parse(article.images);
     } catch (e) {
       console.error('Error parsing images:', e);
+      additionalImages = [];
     }
   }
 
@@ -172,7 +182,7 @@ const ArticleDetail = () => {
         {/* Page Header */}
         <header className="text-center mb-6 sm:mb-10">
           <Badge className="mb-3 sm:mb-4 bg-blue-100 text-blue-800 px-3 py-1 text-sm font-medium">
-            {article.category.name}
+            {article.category?.name || 'General'}
           </Badge>
           
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight px-2">
@@ -193,24 +203,11 @@ const ArticleDetail = () => {
             </figure>
           )}
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm text-gray-600 border-t border-gray-200 pt-4 px-2">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              <span>{article.author.name}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4" />
-              <span>{article.views} views</span>
-            </div>
-          </div>
         </header>
 
         {/* Discussion/Polling Section */}
-        
+       
+
         {/* Article Body - Responsive Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-0">
           {(() => {
@@ -271,7 +268,7 @@ const ArticleDetail = () => {
                         className="w-full h-auto border border-gray-200"
                       />
                       <figcaption className="text-sm text-gray-600 italic mt-2 text-center">
-                       {localImageCounter}
+                        Figure {localImageCounter}
                       </figcaption>
                     </figure>
                   );
@@ -290,7 +287,7 @@ const ArticleDetail = () => {
                       className="w-full h-auto border border-gray-200"
                     />
                     <figcaption className="text-sm text-gray-600 italic mt-2 text-center">
-                      {localImageCounter}
+                      Figure {localImageCounter}
                     </figcaption>
                   </figure>
                 );
