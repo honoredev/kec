@@ -151,9 +151,9 @@ const ArticleDetail = () => {
     );
   }
 
-  // Parse additional images
+  // Parse additional images - only after article is loaded
   let additionalImages: string[] = [];
-  if (article && article.images) {
+  if (article?.images) {
     try {
       additionalImages = JSON.parse(article.images);
     } catch (e) {
@@ -212,14 +212,14 @@ const ArticleDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 px-2 sm:px-0">
           {(() => {
             // Use predefined column content or split at midpoint
-            const allParagraphs = article.content.split('\n\n').filter(p => p.trim());
+            const allParagraphs = (article?.content || '').split('\n\n').filter(p => p.trim());
             const midpoint = Math.ceil(allParagraphs.length / 2);
             
-            const leftParagraphs = article.leftColumnContent 
+            const leftParagraphs = article?.leftColumnContent 
               ? article.leftColumnContent.split('\n\n').filter(p => p.trim())
               : allParagraphs.slice(0, midpoint);
               
-            const rightParagraphs = article.rightColumnContent 
+            const rightParagraphs = article?.rightColumnContent 
               ? article.rightColumnContent.split('\n\n').filter(p => p.trim())
               : allParagraphs.slice(midpoint);
 

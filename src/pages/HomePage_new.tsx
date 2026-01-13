@@ -444,7 +444,7 @@ const HomePage = () => {
       </div>
 
       <div className="mt-8 lg:mt-12 border-t border-gray-200 pt-6 lg:pt-8">
-        <h2 className="text-xl sm:text-2xl font-serif font-bold mb-4 lg:mb-6">How It Works</h2>
+        <h2 className="text-xl sm:text-2xl font-serif font-bold mb-4 lg:mb-6">Bikora Bite</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {videoStories.slice(0, 5).map((story, index) => (
             <div key={story.id} className="group">
