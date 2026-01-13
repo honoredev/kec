@@ -51,15 +51,6 @@ const ArticlePage = () => {
     );
   }
 
-  if (!story) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8 text-center">
-        <h1 className="text-2xl font-serif font-bold mb-4">Article Not Found</h1>
-        <Link to="/" className="text-blue-600 hover:underline">← Back to Home</Link>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
       {/* Header */}
