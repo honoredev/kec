@@ -38,33 +38,11 @@ const ArticleDetail = () => {
     const cached = sessionStorage.getItem('trending-articles');
     return cached ? JSON.parse(cached) : [];
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [commentAuthor, setCommentAuthor] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
-  
-  // Hardcoded fallback comments
-  const fallbackComments: Comment[] = [
-    {
-      id: 1,
-      content: "This is a very insightful article. The analysis provided here really helps understand the current situation better. Thank you for sharing this valuable information.",
-      author: "Sarah Johnson",
-      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-    },
-    {
-      id: 2,
-      content: "Great piece of journalism! I appreciate the thorough research and balanced perspective presented in this article.",
-      author: "Michael Chen",
-      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
-    },
-    {
-      id: 3,
-      content: "Excellent reporting. This article provides exactly the kind of detailed analysis we need on this topic.",
-      author: "Emma Williams",
-      createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString()
-    }
-  ];
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -80,6 +58,8 @@ const ArticleDetail = () => {
       }
       
       console.log('Fetching article with slug:', slug);
+      
+      setLoading(true);
       
       try {
         const [articleResponse, trendingResponse] = await Promise.all([
@@ -112,33 +92,38 @@ const ArticleDetail = () => {
           sessionStorage.setItem('trending-articles', JSON.stringify(trendingList));
         }
         
-        // Always set fallback comments first, then try to fetch real ones
-        setComments(fallbackComments);
-        
         // Fetch comments
         if (articleResponse.ok) {
           try {
             const commentsResponse = await fetch(`https://kec-backend-1.onrender.com/api/articles/${slug}/comments`);
             if (commentsResponse.ok) {
               const commentsData = await commentsResponse.json();
-              const fetchedComments = commentsData.comments || [];
-              // Only replace fallback comments if we have real comments
-              if (fetchedComments.length > 0) {
-                setComments(fetchedComments);
-              }
+              setComments(commentsData.comments || []);
             }
           } catch (error) {
             console.error('Error fetching comments:', error);
-            // Keep fallback comments on error
           }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchArticle();
   }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading article...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!article) {
     return (
@@ -176,7 +161,7 @@ const ArticleDetail = () => {
           className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 sm:mb-8 text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Articles
+          Gusubira Inyuma
         </Link>
 
         {/* Page Header */}
@@ -425,7 +410,7 @@ const ArticleDetail = () => {
               <div className="bg-white border border-gray-200 p-4 sm:p-6 lg:h-screen lg:overflow-y-auto">
                 <div className="flex items-center gap-2 mb-4 sm:mb-6">
                   <TrendingUp className="w-5 h-5 text-blue-600" />
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Latest News</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Inkuru Ziheruka</h2>
                 </div>
                 
                 <div className="space-y-4 sm:space-y-5">
